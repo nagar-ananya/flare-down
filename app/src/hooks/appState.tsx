@@ -9,30 +9,27 @@ import React, {
   useState,
 } from 'react';
 
-import { getApiKey, forgetApiKey } from '../ai/keyStore';
-import { buildPayload } from '../ai/payload';
-import { AI_MODEL, askForSecondOpinion } from '../ai/secondOpinion';
 import { canFetch, fetchEnvironment, isStale, type Coordinates } from '../api/openMeteo';
-import { clearAiOpinions, getAiOpinion, getMeta, loadFeatureInputRows,
-  getLastEnvironmentFetch, getProfile, insertPrediction, saveAiOpinion, setMeta,
-  saveCheckIn as saveCheckInRow, upsertEnvironment } from '../db/queries';
+import {
+  getLastEnvironmentFetch,
+  getProfile,
+  insertPrediction,
+  loadFeatureInputRows,
+  saveCheckIn as saveCheckInRow,
+  upsertEnvironment,
+} from '../db/queries';
 import { resetDatabase, runMigrations } from '../db/migrations';
 import { DATABASE_NAME } from '../db/schema';
 import { buildDailyFrame, checkinDayCount, MIN_HISTORY_DAYS } from '../logic/frame';
 import { rulebook } from '../logic/rulebook';
 import { deriveRiskState, type RiskState } from '../logic/risk';
-import type { CheckIn, Profile, StoredAiOpinion } from '../types/models';
+import type { CheckIn, Profile } from '../types/models';
 import { todayLocal } from '../utils/dates';
 
 export { rulebook };
 export type { RiskState } from '../logic/risk';
 
 export type EnvironmentStatus = 'idle' | 'fetching' | 'ok' | 'unavailable';
-
-export type AnalysisMode = 'local' | 'local_plus_ai';
-export type AiStatus = 'off' | 'loading' | 'ok' | 'unavailable';
-
-const ANALYSIS_MODE_KEY = 'analysis_mode';
 
 interface AppState {
   ready: boolean;
@@ -43,11 +40,6 @@ interface AppState {
   today: string;
   todayLogged: boolean;
   db: SQLite.SQLiteDatabase | null;
-  analysisMode: AnalysisMode;
-  aiOpinion: StoredAiOpinion | null;
-  aiStatus: AiStatus;
-  setAnalysisMode: (mode: AnalysisMode) => Promise<void>;
-  refreshAiOpinion: (force?: boolean) => Promise<void>;
   refresh: () => Promise<void>;
   saveCheckIn: (checkIn: CheckIn) => Promise<void>;
   setProfile: (profile: Profile) => void;
@@ -57,7 +49,6 @@ interface AppState {
 
 const AppContext = createContext<AppState | null>(null);
 
-// Holds the database, profile and current score for the whole app.
 export function AppProvider({ children }: { children: React.ReactNode }): React.ReactElement {
   const dbRef = useRef<SQLite.SQLiteDatabase | null>(null);
   const fetchInFlight = useRef(false);
@@ -67,10 +58,6 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>('idle');
   const [checkinDays, setCheckinDays] = useState(0);
   const [todayLogged, setTodayLogged] = useState(false);
-  const [analysisMode, setAnalysisModeState] = useState<AnalysisMode>('local');
-  const [aiOpinion, setAiOpinion] = useState<StoredAiOpinion | null>(null);
-  const [aiStatus, setAiStatus] = useState<AiStatus>('off');
-  const aiInFlight = useRef(false);
   const today = todayLocal();
 
   const recompute = useCallback(async (): Promise<void> => {
@@ -80,8 +67,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     try {
       const rows = await loadFeatureInputRows(db, todayLocal());
       setCheckinDays(checkinDayCount(buildDailyFrame(rows)));
-      setTodayLogged(rows.some((r) => r.date === todayLocal() && r.severity !== null &&
-        r.severity !== undefined));
+      setTodayLogged(rows.some((r) => r.date === todayLocal() && r.severity != null));
 
       const next = deriveRiskState(rows, rulebook);
       setRisk(next);
@@ -98,99 +84,13 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
             source: 'local',
           });
         } catch (error) {
-          console.error('[flare-down] could not log prediction (risk value is still correct)', error);
+          console.error('[flare-down] could not log prediction', error);
         }
       }
     } catch (error) {
-      console.error('[flare-down] recompute failed, the score on screen may be out of date', error);
+      console.error('[flare-down] recompute failed', error);
     }
   }, []);
-
-  const refreshAiOpinion = useCallback(
-    async (force = false): Promise<void> => {
-      const db = dbRef.current;
-      if (!db) return;
-
-      const mode = (await getMeta(db, ANALYSIS_MODE_KEY)) as AnalysisMode | null;
-      if (mode !== 'local_plus_ai') {
-        setAiStatus('off');
-        setAiOpinion(null);
-        return;
-      }
-
-      const date = todayLocal();
-      if (!force) {
-        const cached = await getAiOpinion(db, date);
-        if (cached) {
-          setAiOpinion(cached);
-          setAiStatus('ok');
-          return;
-        }
-      }
-
-      if (aiInFlight.current) return;
-      aiInFlight.current = true;
-      setAiStatus('loading');
-      try {
-        const apiKey = await getApiKey();
-        if (!apiKey) {
-          setAiStatus('unavailable');
-          return;
-        }
-
-        const rows = await loadFeatureInputRows(db, date);
-        const frame = buildDailyFrame(rows);
-        if (frame.dates.length === 0) {
-          setAiStatus('unavailable');
-          return;
-        }
-
-        const opinion = await askForSecondOpinion(
-          buildPayload(frame, frame.dates.length - 1),
-          apiKey,
-        );
-        if (!opinion) {
-          setAiStatus('unavailable');
-          return;
-        }
-
-        const stored: StoredAiOpinion = {
-          date,
-          score: opinion.score,
-          band: opinion.band,
-          factorIds: opinion.factorIds,
-          summary: opinion.summary,
-          model: AI_MODEL,
-          createdAt: new Date().toISOString(),
-        };
-        await saveAiOpinion(db, stored);
-        setAiOpinion(stored);
-        setAiStatus('ok');
-      } catch (error) {
-        console.warn('[flare-down] AI second opinion unavailable', error);
-        setAiStatus('unavailable');
-      } finally {
-        aiInFlight.current = false;
-      }
-    },
-    [],
-  );
-
-  const setAnalysisMode = useCallback(
-    async (mode: AnalysisMode): Promise<void> => {
-      const db = dbRef.current;
-      if (!db) return;
-      await setMeta(db, ANALYSIS_MODE_KEY, mode);
-      setAnalysisModeState(mode);
-      if (mode === 'local') {
-        setAiStatus('off');
-        setAiOpinion(null);
-      } else {
-        await refreshAiOpinion();
-      }
-    },
-    [refreshAiOpinion],
-  );
 
   const refresh = useCallback(async (): Promise<void> => {
     const db = dbRef.current;
@@ -212,8 +112,6 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
         if (cancelled) return;
         dbRef.current = db;
         setProfileState(await getProfile(db));
-        const mode = (await getMeta(db, ANALYSIS_MODE_KEY)) as AnalysisMode | null;
-        if (!cancelled && mode === 'local_plus_ai') setAnalysisModeState(mode);
         await recompute();
       } catch (error) {
         console.error('[flare-down] database init failed', error);
@@ -226,22 +124,14 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     };
   }, [recompute]);
 
-  useEffect(() => {
-    if (!ready || analysisMode !== 'local_plus_ai') return;
-    void refreshAiOpinion();
-  }, [ready, analysisMode, refreshAiOpinion]);
-
   const saveCheckIn = useCallback(
     async (checkIn: CheckIn): Promise<void> => {
       const db = dbRef.current;
       if (!db) return;
       await saveCheckInRow(db, checkIn);
       await recompute();
-      if (checkIn.date === todayLocal() && analysisMode === 'local_plus_ai') {
-        await refreshAiOpinion(true);
-      }
     },
-    [recompute, analysisMode, refreshAiOpinion],
+    [recompute],
   );
 
   const setProfile = useCallback((next: Profile): void => {
@@ -286,13 +176,9 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     const db = dbRef.current;
     if (!db) return;
     await resetDatabase(db);
-    await forgetApiKey();
     setProfileState(null);
     setCheckinDays(0);
     setTodayLogged(false);
-    setAnalysisModeState('local');
-    setAiOpinion(null);
-    setAiStatus('off');
     setEnvironmentStatus('idle');
     setRisk({ status: 'collecting', days: 0, required: MIN_HISTORY_DAYS });
   }, []);
@@ -307,20 +193,26 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
       today,
       todayLogged,
       db: dbRef.current,
-      analysisMode,
-      aiOpinion,
-      aiStatus,
-      setAnalysisMode,
-      refreshAiOpinion,
       refresh,
       saveCheckIn,
       setProfile,
       refreshEnvironment,
       deleteAllData,
     }),
-    [ready, profile, risk, environmentStatus, checkinDays, today, todayLogged,
-     analysisMode, aiOpinion, aiStatus, setAnalysisMode, refreshAiOpinion, refresh,
-     saveCheckIn, setProfile, refreshEnvironment, deleteAllData],
+    [
+      ready,
+      profile,
+      risk,
+      environmentStatus,
+      checkinDays,
+      today,
+      todayLogged,
+      refresh,
+      saveCheckIn,
+      setProfile,
+      refreshEnvironment,
+      deleteAllData,
+    ],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

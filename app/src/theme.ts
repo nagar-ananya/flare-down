@@ -1,13 +1,8 @@
 import type { RiskBand } from './types/models';
 
-export interface Gradient {
-  readonly from: string;
-  readonly to: string;
-}
-
 export interface Tint {
-  readonly ink: string;
-  readonly soft: string;
+  ink: string;
+  soft: string;
 }
 
 export interface Palette {
@@ -39,7 +34,6 @@ export interface Palette {
   bandHighFill: string;
   bandHighSoft: string;
 
-  positive: string;
   destructive: string;
   destructiveSoft: string;
 
@@ -50,23 +44,13 @@ export interface Palette {
     sky: Tint;
   };
 
-  aurora: readonly [string, string];
-  heat: readonly string[];
-
-  gradients: {
-    primary: Gradient;
-    hero: Gradient;
-    low: Gradient;
-    elevated: Gradient;
-    high: Gradient;
-    trend: Gradient;
-  };
+  heat: string[];
 
   shadow: string;
 }
 
-// Colors. No red anywhere near the risk score, the top band is orange.
-const light: Palette = {
+// No red anywhere near the risk score, the top band is orange.
+export const palette: Palette = {
   background: '#FFFFFF',
   surface: '#F4F2F6',
   surfaceAlt: '#EAE6EE',
@@ -95,7 +79,6 @@ const light: Palette = {
   bandHighFill: '#EE7D57',
   bandHighSoft: '#FDE4DA',
 
-  positive: '#1D7447',
   destructive: '#A8352A',
   destructiveSoft: '#FBE1DC',
 
@@ -106,79 +89,11 @@ const light: Palette = {
     sky: { ink: '#22668F', soft: '#E0EEF8' },
   },
 
-  aurora: ['#FFFFFF', '#FFFFFF'],
   heat: ['#EEECF0', '#D7F0E0', '#ABDDBE', '#F8DE9C', '#F5B595', '#EA8A6A'],
 
-  gradients: {
-    primary: { from: '#8E44AD', to: '#8E44AD' },
-    hero: { from: '#8E44AD', to: '#8E44AD' },
-    low: { from: '#52B77A', to: '#52B77A' },
-    elevated: { from: '#F2B33D', to: '#F2B33D' },
-    high: { from: '#EE7D57', to: '#EE7D57' },
-    trend: { from: '#8E44AD', to: '#8E44AD' },
-  },
-
   shadow: '#000000',
 };
 
-const dark: Palette = {
-  background: '#0B0912',
-  surface: '#16121F',
-  surfaceAlt: '#1F1A2D',
-  surfaceSunken: '#100D19',
-  border: '#2B2440',
-  borderStrong: '#3D3459',
-
-  text: '#F5F2FB',
-  textMuted: '#B6AFCB',
-  textFaint: '#877FA4',
-  onAccent: '#FFFFFF',
-
-  primary: '#A192FF',
-  primaryDeep: '#7C6AF0',
-  primarySoft: '#241D3D',
-  aqua: '#4FD3C2',
-  aquaSoft: '#12312E',
-
-  bandLowText: '#4FD3C2',
-  bandLowFill: '#2CBFAC',
-  bandLowSoft: '#12312E',
-  bandElevatedText: '#F2BC63',
-  bandElevatedFill: '#E5A63F',
-  bandElevatedSoft: '#33270F',
-  bandHighText: '#F3A088',
-  bandHighFill: '#E4805F',
-  bandHighSoft: '#341F18',
-
-  positive: '#4FD3C2',
-  destructive: '#F0917A',
-  destructiveSoft: '#331C16',
-
-  tints: {
-    sage: { ink: '#9ED9C0', soft: '#173229' },
-    butter: { ink: '#F2CF7E', soft: '#33280F' },
-    lilac: { ink: '#C9B5F0', soft: '#2A2140' },
-    sky: { ink: '#9CCBEA', soft: '#14293A' },
-  },
-
-  aurora: ['#2A1F55', '#123A38'],
-  heat: ['#1C1828', '#153733', '#1C5A4E', '#5C4A22', '#87552F', '#B06A46'],
-
-  gradients: {
-    primary: { from: '#8B78FF', to: '#5E4BD8' },
-    hero: { from: '#7B65F5', to: '#1E9E97' },
-    low: { from: '#4FD3C2', to: '#189183' },
-    elevated: { from: '#F2BC63', to: '#C88A22' },
-    high: { from: '#F3A088', to: '#CC6E4F' },
-    trend: { from: '#8B78FF', to: '#4FD3C2' },
-  },
-
-  shadow: '#000000',
-};
-
-export const palettes = { light, dark } as const;
-
-export type ColorSchemeName = keyof typeof palettes;
 
 export const spacing = {
   xs: 4,
@@ -200,7 +115,6 @@ export const radius = {
 
 export const MIN_TOUCH_TARGET = 44;
 
-// Text sizes.
 export const typography = {
   hero: { fontSize: 56, fontWeight: '700' as const },
   display: { fontSize: 30, fontWeight: '700' as const },
@@ -215,51 +129,30 @@ export const typography = {
 export interface BandStyle {
   label: string;
   text: string;
-  fill: string;
   soft: string;
-  gradient: Gradient;
-  blurb: string;
 }
 
-// Color and label for each risk band.
 export function bandStyle(band: RiskBand, palette: Palette): BandStyle {
   switch (band) {
     case 'high':
       return {
         label: 'High',
         text: palette.bandHighText,
-        fill: palette.bandHighFill,
         soft: palette.bandHighSoft,
-        gradient: palette.gradients.high,
-        blurb:
-          'Several of the rules are adding points at once, which is when flares are ' +
-          'most likely.',
       };
     case 'elevated':
       return {
         label: 'Elevated',
         text: palette.bandElevatedText,
-        fill: palette.bandElevatedFill,
         soft: palette.bandElevatedSoft,
-        gradient: palette.gradients.elevated,
-        blurb: 'A few factors are drifting in a direction worth keeping an eye on.',
       };
     default:
       return {
         label: 'Low',
         text: palette.bandLowText,
-        fill: palette.bandLowFill,
         soft: palette.bandLowSoft,
-        gradient: palette.gradients.low,
-        blurb: 'Nothing in your recent pattern stands out right now.',
       };
   }
-}
-
-export function severityGradient(value: number, palette: Palette): Gradient {
-  if (value <= 3) return palette.gradients.low;
-  if (value <= 6) return palette.gradients.elevated;
-  return palette.gradients.high;
 }
 
 export function severityWord(value: number): string {

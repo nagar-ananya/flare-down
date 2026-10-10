@@ -27,39 +27,25 @@ import {
   ShortDisclaimer,
   Txt,
 } from '../../src/components/primitives';
+import { RISK_HORIZON_KICKER } from '../../src/constants/copy';
 import {
   exportCsv,
   getEnvironmentDay,
   getLastEnvironmentFetch,
   listCheckIns,
 } from '../../src/db/queries';
-import {
-  RISK_HORIZON_KICKER,
-} from '../../src/constants/copy';
 import { useApp } from '../../src/hooks/appState';
 import { useTheme } from '../../src/hooks/useTheme';
 import { bandStyle, radius, spacing, type Palette } from '../../src/theme';
-import type { EnvironmentDay, StoredAiOpinion } from '../../src/types/models';
+import type { EnvironmentDay, RiskBand } from '../../src/types/models';
 import { addDays, dateRange, formatLong, todayLocal } from '../../src/utils/dates';
 import { formatRelativeTime } from '../../src/utils/relativeTime';
 
 export default function TodayScreen(): React.ReactElement {
   const { palette } = useTheme();
   const router = useRouter();
-  const {
-    risk,
-    refresh,
-    refreshEnvironment,
-    environmentStatus,
-    todayLogged,
-    profile,
-    db,
-    checkinDays,
-    analysisMode,
-    aiOpinion,
-    aiStatus,
-    refreshAiOpinion,
-  } = useApp();
+  const { risk, refresh, refreshEnvironment, environmentStatus, todayLogged, profile, db, checkinDays } =
+    useApp();
   const [ribbon, setRibbon] = useState<{ date: string; logged: boolean }[]>([]);
   const [conditions, setConditions] = useState<EnvironmentDay | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
@@ -112,7 +98,6 @@ export default function TodayScreen(): React.ReactElement {
 
   useEffect(() => {
     void doEnvironmentRefresh(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.latitude, profile?.longitude]);
 
   const onExport = async (): Promise<void> => {
@@ -186,7 +171,7 @@ export default function TodayScreen(): React.ReactElement {
 
       {environmentStatus === 'unavailable' ? (
         <Reveal delay={100}>
-          <Card tone="alt" style={{ marginTop: spacing.md }} level={1}>
+          <Card tone="alt" style={{ marginTop: spacing.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md }}>
               <CloudOffIcon size={17} color={palette.textFaint} />
               <View style={{ flex: 1 }}>
@@ -244,18 +229,6 @@ export default function TodayScreen(): React.ReactElement {
         </Reveal>
       ) : null}
 
-      {analysisMode === 'local_plus_ai' && risk.status === 'ready' ? (
-        <Reveal delay={290}>
-          <AiCard
-            status={aiStatus}
-            opinion={aiOpinion}
-            localBand={risk.band}
-            localScore={risk.score}
-            onRetry={() => void refreshAiOpinion(true)}
-          />
-        </Reveal>
-      ) : null}
-
       <ShortDisclaimer />
     </Screen>
   );
@@ -275,7 +248,7 @@ function ReadyCard({
   onOpen,
 }: {
   score: number;
-  band: 'low' | 'elevated' | 'high';
+  band: RiskBand;
   onOpen: () => void;
 }): React.ReactElement {
   const { palette } = useTheme();
@@ -289,7 +262,7 @@ function ReadyCard({
       accessibilityLabel={`Flare risk ${style.label}, ${score} points out of 100`}
       accessibilityHint="Opens the full breakdown"
     >
-      <Card level={2}>
+      <Card>
         <Kicker>{RISK_HORIZON_KICKER}</Kicker>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
@@ -324,94 +297,6 @@ function ReadyCard({
   );
 }
 
-function AiCard({
-  status,
-  opinion,
-  localBand,
-  localScore,
-  onRetry,
-}: {
-  status: 'off' | 'loading' | 'ok' | 'unavailable';
-  opinion: StoredAiOpinion | null;
-  localBand: 'low' | 'elevated' | 'high';
-  localScore: number;
-  onRetry: () => void;
-}): React.ReactElement | null {
-  const { palette } = useTheme();
-  if (status === 'off') return null;
-
-  if (status === 'loading') {
-    return (
-      <Card tone="alt" level={1} style={{ marginTop: spacing.md }}>
-        <Kicker>AI second opinion</Kicker>
-        <Txt tone="faint" style={{ marginTop: spacing.sm }}>
-          Asking…
-        </Txt>
-      </Card>
-    );
-  }
-
-  if (status === 'unavailable' || !opinion) {
-    return (
-      <PressableScale onPress={onRetry} accessibilityLabel="Retry the AI second opinion" scaleTo={0.99}>
-        <Card tone="alt" level={1} style={{ marginTop: spacing.md }}>
-          <Kicker>AI second opinion</Kicker>
-          <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 21 }}>
-            Not available right now. Your score above still works because it is worked
-            out on this phone. Tap to try again.
-          </Txt>
-        </Card>
-      </PressableScale>
-    );
-  }
-
-  const style = bandStyle(opinion.band, palette);
-  const agrees = opinion.band === localBand;
-  const drift = opinion.score - localScore;
-
-  return (
-    <Card tone="alt" level={1} style={{ marginTop: spacing.md }}>
-      <Kicker>AI second opinion</Kicker>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'baseline',
-          gap: spacing.sm,
-          marginTop: spacing.sm,
-          flexWrap: 'wrap',
-        }}
-      >
-        <Txt variant="title" style={{ color: style.text }}>
-          {opinion.score}
-        </Txt>
-        <Txt tone="faint">/ 100</Txt>
-        <Pill label={style.label} color={style.text} background={style.soft} />
-      </View>
-
-      <Txt tone="muted" style={{ marginTop: spacing.md, lineHeight: 21 }}>
-        {agrees
-          ? `Flare Down's rules agree. Both say ${bandStyle(localBand, palette).label.toLowerCase()}.`
-          : `Flare Down's rules say ${bandStyle(localBand, palette).label.toLowerCase()}, which is ${
-              drift > 0 ? 'lower' : 'higher'
-            } than the AI. If they don't match, go with Flare Down's rules, since you can check them by hand.`}
-      </Txt>
-
-      {opinion.summary ? (
-        <Txt tone="muted" style={{ marginTop: spacing.md, lineHeight: 21, fontStyle: 'italic' }}>
-          {opinion.summary}
-        </Txt>
-      ) : null}
-    </Card>
-  );
-}
-
-function NoRiskYetPill({ label }: { label: string }): React.ReactElement {
-  const { palette } = useTheme();
-  return (
-    <Pill label={label} color={palette.primary} background={palette.primarySoft} style={{ marginTop: spacing.md }} />
-  );
-}
-
 function CollectingCard({
   days,
   required,
@@ -425,8 +310,9 @@ function CollectingCard({
   onCheckIn: () => void;
   onBackfill: () => void;
 }): React.ReactElement {
+  const { palette } = useTheme();
   return (
-    <Card level={2} style={{ paddingTop: spacing.xl }}>
+    <Card style={{ paddingTop: spacing.xl }}>
       <Kicker>Collecting data</Kicker>
 
       <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm, marginTop: spacing.md }}>
@@ -443,7 +329,12 @@ function CollectingCard({
         up to two weeks, so it needs that much data first.
       </Txt>
 
-      <NoRiskYetPill label="No score yet" />
+      <Pill
+        label="No score yet"
+        color={palette.primary}
+        background={palette.primarySoft}
+        style={{ marginTop: spacing.md }}
+      />
 
       {ribbon.length > 0 ? (
         <View style={{ width: '100%', marginTop: spacing.lg }}>
@@ -474,7 +365,7 @@ function SparseCard({
   onBackfill: () => void;
 }): React.ReactElement {
   return (
-    <Card level={2}>
+    <Card>
       <Kicker>Not enough recent data</Kicker>
       <Txt variant="heading" style={{ marginTop: spacing.sm }}>
         Log a few more days to get your score back
@@ -565,7 +456,7 @@ function ConditionsStrip({
 }: {
   conditions: EnvironmentDay;
   palette: Palette;
-}): React.ReactElement {
+}): React.ReactElement | null {
   const items: { key: string; icon: React.ReactNode; value: string; label: string }[] = [];
 
   if (conditions.tempMeanC !== null) {
@@ -609,10 +500,10 @@ function ConditionsStrip({
     });
   }
 
-  if (items.length === 0) return <View />;
+  if (items.length === 0) return null;
 
   return (
-    <Card style={{ marginTop: spacing.md }} tone="alt" level={1}>
+    <Card style={{ marginTop: spacing.md }} tone="alt">
       <Txt variant="caption" tone="faint" style={{ marginBottom: spacing.md }}>
         Weather where you are (used in your score)
       </Txt>

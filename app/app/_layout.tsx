@@ -9,7 +9,7 @@ import { useTheme } from '../src/hooks/useTheme';
 
 function Gate(): React.ReactElement {
   const { ready, profile } = useApp();
-  const { palette, scheme } = useTheme();
+  const { palette } = useTheme();
   const segments = useSegments();
   const router = useRouter();
 
@@ -40,7 +40,7 @@ function Gate(): React.ReactElement {
 
   return (
     <>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: palette.background },

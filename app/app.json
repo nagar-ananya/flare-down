@@ -35,7 +35,6 @@
           "locationWhenInUsePermission": "Flare Down uses your approximate location only to fetch local weather and air quality. It is never shared."
         }
       ],
-      "expo-secure-store",
       "expo-audio"
     ],
     "scheme": "flaredown"

@@ -1,3 +1,5 @@
+import { addDays, daysBetween } from '../utils/dates';
+
 export const SELF_VARS = [
   'severity',
   'itch',
@@ -40,7 +42,7 @@ export const FRAME_COLUMNS: readonly string[] = [
   'severity_delta',
 ];
 
-const MIN_PERIODS: Readonly<Record<number, number>> = { 3: 2, 7: 5, 14: 9 };
+const MIN_PERIODS: Record<number, number> = { 3: 2, 7: 5, 14: 9 };
 
 // A missing day can copy the day before it, but only for up to 3 days.
 export const FFILL_LIMIT = 3;
@@ -48,7 +50,6 @@ export const FFILL_LIMIT = 3;
 export const MAX_MISSING_FRACTION = 0.4;
 export const RECENT_WINDOW = 14;
 
-// How many days of check-ins we need before showing a score.
 export const MIN_HISTORY_DAYS = 14;
 
 const BASELINE_WINDOW = 14;
@@ -56,45 +57,23 @@ const SLEEP_TARGET_HOURS = 7.5;
 const SLEEP_DEBT_WINDOW = 7;
 
 export interface FrameInputRow {
-  readonly date: string;
-  readonly [column: string]: string | number | null | undefined;
+  date: string;
+  [column: string]: string | number | null | undefined;
 }
 
 export type Series = (number | null)[];
 
 export interface DailyFrame {
-  readonly dates: readonly string[];
-  readonly columns: Readonly<Record<string, Series>>;
-  readonly hasCheckin: readonly number[];
-}
-
-const MS_PER_DAY = 86_400_000;
-
-function toUtcMillis(date: string): number {
-  const [y, m, d] = date.split('-').map(Number);
-  return Date.UTC(y, m - 1, d);
-}
-
-function fromUtcMillis(millis: number): string {
-  const dt = new Date(millis);
-  const month = `${dt.getUTCMonth() + 1}`.padStart(2, '0');
-  const day = `${dt.getUTCDate()}`.padStart(2, '0');
-  return `${dt.getUTCFullYear()}-${month}-${day}`;
-}
-
-export function addDays(date: string, days: number): string {
-  return fromUtcMillis(toUtcMillis(date) + days * MS_PER_DAY);
-}
-
-export function daysBetween(from: string, to: string): number {
-  return Math.round((toUtcMillis(to) - toUtcMillis(from)) / MS_PER_DAY);
+  dates: readonly string[];
+  columns: Record<string, Series>;
+  hasCheckin: readonly number[];
 }
 
 function forwardFill(series: Series, limit: number): Series {
   const out: Series = new Array(series.length).fill(null);
   let last: number | null = null;
   let filled = 0;
-  for (let i = 0; i < series.length; i += 1) {
+  for (let i = 0; i < series.length; i++) {
     const value = series[i];
     if (value !== null) {
       out[i] = value;
@@ -112,10 +91,10 @@ function forwardFill(series: Series, limit: number): Series {
 
 function rollingMean(series: Series, window: number, minPeriods: number): Series {
   const out: Series = new Array(series.length).fill(null);
-  for (let i = 0; i < series.length; i += 1) {
+  for (let i = 0; i < series.length; i++) {
     let sum = 0;
     let count = 0;
-    for (let j = Math.max(0, i - window + 1); j <= i; j += 1) {
+    for (let j = Math.max(0, i - window + 1); j <= i; j++) {
       const value = series[j];
       if (value !== null) {
         sum += value;
@@ -129,11 +108,11 @@ function rollingMean(series: Series, window: number, minPeriods: number): Series
 
 function rollingSumComplete(series: Series, window: number): Series {
   const out: Series = new Array(series.length).fill(null);
-  for (let i = 0; i < series.length; i += 1) {
+  for (let i = 0; i < series.length; i++) {
     if (i + 1 < window) continue;
     let sum = 0;
     let complete = true;
-    for (let j = i - window + 1; j <= i; j += 1) {
+    for (let j = i - window + 1; j <= i; j++) {
       const value = series[j];
       if (value === null) {
         complete = false;
@@ -167,7 +146,6 @@ function toNumber(value: string | number | null | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-// Turns the saved rows into one list per column, with one value for every day.
 export function buildDailyFrame(rows: readonly FrameInputRow[]): DailyFrame {
   if (rows.length === 0) {
     return { dates: [], columns: {}, hasCheckin: [] };
@@ -181,7 +159,7 @@ export function buildDailyFrame(rows: readonly FrameInputRow[]): DailyFrame {
   const span = daysBetween(first, sorted[sorted.length - 1].date);
 
   const dates: string[] = [];
-  for (let i = 0; i <= span; i += 1) dates.push(addDays(first, i));
+  for (let i = 0; i <= span; i++) dates.push(addDays(first, i));
 
   const columns: Record<string, Series> = {};
   for (const name of BASE_VARS) {
@@ -224,7 +202,7 @@ function addDerived(columns: Record<string, Series>): void {
 export function recentCheckinCoverage(frame: DailyFrame, index: number): number {
   const start = Math.max(0, index - RECENT_WINDOW + 1);
   let sum = 0;
-  for (let i = start; i <= index; i += 1) sum += frame.hasCheckin[i];
+  for (let i = start; i <= index; i++) sum += frame.hasCheckin[i];
   return sum / (index - start + 1);
 }
 

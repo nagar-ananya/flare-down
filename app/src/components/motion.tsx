@@ -107,30 +107,3 @@ export function useCountUp(target: number, duration = 900, decimals = 0): string
 
   return display.toFixed(decimals);
 }
-
-export function useDrift(duration = 9000): Animated.Value {
-  const drift = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(drift, {
-          toValue: 1,
-          duration,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(drift, {
-          toValue: 0,
-          duration,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [drift, duration]);
-
-  return drift;
-}

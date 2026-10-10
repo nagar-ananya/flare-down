@@ -24,7 +24,7 @@ export default function RiskDetailScreen(): React.ReactElement {
 
   if (risk.status !== 'ready') {
     return (
-      <Screen aurora={false} edges={[]}>
+      <Screen edges={[]}>
         <Card>
           <Txt tone="muted">
             There is no score to explain yet. Keep logging daily check-ins and it will appear here.
@@ -49,11 +49,11 @@ export default function RiskDetailScreen(): React.ReactElement {
   const { elevated, high } = rulebook.bands;
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: 100 }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Stack.Screen options={{ title: 'How your score adds up' }} />
 
       <Reveal>
-        <Card level={2}>
+        <Card>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
             <Txt variant="hero" style={{ color: style.text }}>
               {score}

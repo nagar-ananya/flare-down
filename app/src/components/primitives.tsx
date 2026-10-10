@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ScrollView,
-  StyleSheet,
   Text,
   View,
   type StyleProp,
@@ -12,28 +11,18 @@ import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { DISCLAIMER_SHORT } from '../constants/copy';
 import { useTheme } from '../hooks/useTheme';
-import {
-  MIN_TOUCH_TARGET,
-  radius,
-  spacing,
-  typography,
-  type Gradient,
-  type Palette,
-} from '../theme';
-import { AuroraBackdrop, GradientFill } from './gradient';
+import { MIN_TOUCH_TARGET, radius, spacing, typography, type Palette } from '../theme';
 import { PressableScale } from './motion';
 
 export function Screen({
   children,
   edges = ['top'],
   scroll = true,
-  aurora = false,
   contentStyle,
 }: {
   children: React.ReactNode;
   edges?: readonly Edge[];
   scroll?: boolean;
-  aurora?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
 }): React.ReactElement {
   const { palette } = useTheme();
@@ -54,12 +43,9 @@ export function Screen({
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: palette.background }}>
-      {aurora ? <AuroraBackdrop colors={palette.aurora} /> : null}
-      <SafeAreaView style={{ flex: 1 }} edges={edges}>
-        {body}
-      </SafeAreaView>
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }} edges={edges}>
+      {body}
+    </SafeAreaView>
   );
 }
 
@@ -150,29 +136,6 @@ export function ScreenTitle({
   );
 }
 
-export function SectionHeading({
-  children,
-  action,
-}: {
-  children: React.ReactNode;
-  action?: React.ReactNode;
-}): React.ReactElement {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: spacing.xl,
-        marginBottom: spacing.md,
-      }}
-    >
-      <Txt variant="heading">{children}</Txt>
-      {action}
-    </View>
-  );
-}
-
 export function Card({
   children,
   style,
@@ -182,7 +145,6 @@ export function Card({
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   padded?: boolean;
-  level?: 1 | 2 | 3;
   tone?: 'surface' | 'alt' | 'sunken';
 }): React.ReactElement {
   const { palette } = useTheme();
@@ -205,25 +167,6 @@ export function Card({
       ]}
     >
       {children}
-    </View>
-  );
-}
-
-export function FeatureCard({
-  children,
-  gradient,
-  style,
-  padded = true,
-}: {
-  children: React.ReactNode;
-  gradient: Gradient;
-  style?: StyleProp<ViewStyle>;
-  padded?: boolean;
-}): React.ReactElement {
-  return (
-    <View style={[{ borderRadius: radius.xl, overflow: 'hidden' }, style]}>
-      <GradientFill gradient={gradient} />
-      <View style={{ padding: padded ? spacing.lg : 0 }}>{children}</View>
     </View>
   );
 }
@@ -325,28 +268,6 @@ export function Pill({
   );
 }
 
-export function StatTile({
-  value,
-  label,
-  accent,
-  style,
-}: {
-  value: string;
-  label: string;
-  accent?: string;
-  style?: StyleProp<ViewStyle>;
-}): React.ReactElement {
-  const { palette } = useTheme();
-  return (
-    <View style={[{ flex: 1, alignItems: 'center', gap: 2 }, style]}>
-      <Text style={[typography.title, { color: accent ?? palette.text }]}>{value}</Text>
-      <Text style={[typography.caption, { color: palette.textFaint, textAlign: 'center' }]}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
 export function IconBadge({
   children,
   background,
@@ -399,18 +320,6 @@ export function NumberCircle({
         {value}
       </Text>
     </View>
-  );
-}
-
-export function Divider({ style }: { style?: StyleProp<ViewStyle> }): React.ReactElement {
-  const { palette } = useTheme();
-  return (
-    <View
-      style={[
-        { height: StyleSheet.hairlineWidth, backgroundColor: palette.border, marginVertical: spacing.md },
-        style,
-      ]}
-    />
   );
 }
 

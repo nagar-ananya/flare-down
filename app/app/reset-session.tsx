@@ -24,11 +24,10 @@ export default function BreathSessionScreen(): React.ReactElement {
 
   useEffect(() => {
     if (clock.done) alarm.ring(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clock.done]);
 
   return (
-    <Screen aurora={false} contentStyle={{ paddingBottom: spacing.xl }}>
+    <Screen contentStyle={{ paddingBottom: spacing.xl }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
         <PressableScale
           onPress={() => router.back()}

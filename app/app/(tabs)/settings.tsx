@@ -28,11 +28,11 @@ import { spacing } from '../../src/theme';
 import { todayLocal } from '../../src/utils/dates';
 
 const ROWS = [
-  { key: 'profile', title: 'Profile', icon: PersonIcon, path: '/settings-profile' as const, destructive: false },
-  { key: 'export', title: 'Export', icon: ExportIcon, path: '/settings-export' as const, destructive: false },
-  { key: 'ai', title: 'AI second opinion', icon: SparkIcon, path: '/settings-ai' as const, destructive: false },
-  { key: 'model', title: 'Scoring & disclaimer', icon: NotebookIcon, path: '/settings-model' as const, destructive: false },
-  { key: 'delete', title: 'Delete all data', icon: TrashIcon, path: '/settings-delete' as const, destructive: true },
+  { key: 'profile', title: 'Profile', icon: PersonIcon, path: '/settings-profile', destructive: false },
+  { key: 'export', title: 'Export', icon: ExportIcon, path: '/settings-export', destructive: false },
+  { key: 'ai', title: 'AI second opinion', icon: SparkIcon, path: '/settings-ai', destructive: false },
+  { key: 'model', title: 'Scoring & disclaimer', icon: NotebookIcon, path: '/settings-model', destructive: false },
+  { key: 'delete', title: 'Delete all data', icon: TrashIcon, path: '/settings-delete', destructive: true },
 ] as const;
 
 export default function SettingsScreen(): React.ReactElement {
@@ -92,8 +92,6 @@ export default function SettingsScreen(): React.ReactElement {
         return `How the ${rulebook.rules.length} rules are scored`;
       case 'delete':
         return "Can't be undone";
-      default:
-        return undefined;
     }
   };
 
@@ -141,6 +139,7 @@ export default function SettingsScreen(): React.ReactElement {
 
   const renderRow = (row: (typeof ROWS)[number]): React.ReactElement => {
     const Icon = row.icon;
+    const subtitle = subtitleFor(row.key);
     return (
       <PressableScale
         key={row.key}
@@ -157,9 +156,9 @@ export default function SettingsScreen(): React.ReactElement {
             <Txt variant="label" style={row.destructive ? { color: palette.destructive } : undefined}>
               {row.title}
             </Txt>
-            {subtitleFor(row.key) ? (
+            {subtitle ? (
               <Txt variant="caption" tone="faint" style={{ marginTop: 2 }}>
-                {subtitleFor(row.key)}
+                {subtitle}
               </Txt>
             ) : null}
           </View>

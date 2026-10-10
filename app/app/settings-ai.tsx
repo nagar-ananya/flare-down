@@ -1,27 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Alert, Switch, View } from 'react-native';
 
 import { SparkIcon } from '../src/components/icons';
 import { Button, Card, IconBadge, Kicker, Pill, Screen, Txt } from '../src/components/primitives';
-import { useApp } from '../src/hooks/appState';
 import { useTheme } from '../src/hooks/useTheme';
 import { bandStyle, spacing } from '../src/theme';
 
 export default function SettingsAiScreen(): React.ReactElement {
   const { palette } = useTheme();
-  const { analysisMode, setAnalysisMode } = useApp();
   const example = bandStyle('elevated', palette);
-
-  useEffect(() => {
-    if (analysisMode !== 'local') void setAnalysisMode('local');
-  }, [analysisMode, setAnalysisMode]);
 
   const onConnect = (): void => {
     Alert.alert('Coming soon', 'The TypeSafe connection is not built yet. This screen is a preview.');
   };
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: 100 }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
         <IconBadge background={palette.primarySoft} size={48}>
           <SparkIcon size={22} color={palette.primary} />

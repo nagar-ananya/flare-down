@@ -54,7 +54,7 @@ export default function FactorDetailScreen(): React.ReactElement {
   const how = rule ? ruleHow(rule) : null;
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: 100 }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Stack.Screen options={{ title: 'Rule' }} />
 
       <Reveal>
@@ -73,7 +73,7 @@ export default function FactorDetailScreen(): React.ReactElement {
 
       {history.length > 1 && rule ? (
         <Reveal delay={60}>
-          <Card level={2} style={{ marginTop: spacing.lg }}>
+          <Card style={{ marginTop: spacing.lg }}>
             <Kicker style={{ marginBottom: spacing.md }}>
               {raises ? 'Points added in the last 2 weeks' : 'Points taken off in the last 2 weeks'}
             </Kicker>

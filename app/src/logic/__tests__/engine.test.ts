@@ -6,7 +6,7 @@ const DAYS = 20;
 
 function dates(): string[] {
   const out: string[] = [];
-  for (let i = 0; i < DAYS; i += 1) {
+  for (let i = 0; i < DAYS; i++) {
     out.push(`2026-03-${String(i + 1).padStart(2, '0')}`);
   }
   return out;

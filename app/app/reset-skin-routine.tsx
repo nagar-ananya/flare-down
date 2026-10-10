@@ -29,7 +29,7 @@ export default function SkinRoutineScreen(): React.ReactElement {
   );
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
       <Stack.Screen options={{ title: "Today's skin routine" }} />
       <Reveal>
         <Txt tone="muted">{`${count} of ${all.length} done today`}</Txt>

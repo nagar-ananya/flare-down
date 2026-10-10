@@ -55,7 +55,7 @@ export async function seedDemoCheckIns(
   const count = Math.min(days, SEVERITY.length);
   const from = addDays(yesterday, -(count - 1));
 
-  for (let i = 0; i < count; i += 1) {
+  for (let i = 0; i < count; i++) {
     const daysAgo = count - i;
     const at = SEVERITY.length - count + i;
     const date = addDays(yesterday, -(daysAgo - 1));
@@ -69,16 +69,13 @@ export async function seedDemoCheckIns(
       alcoholUnits: DRINKS[at],
       dietProcessed: PROCESSED[at] === 1,
       illness: SICK_DAYS.includes(daysAgo),
-      soreThroat: false,
       skinInjury: INJURY_DAYS.includes(daysAgo),
       waterGlasses: Math.round(5 + random() * 4),
       dietDairy: random() < 0.45,
       dietGluten: random() < 0.55,
       dietSugar: random() < 0.45,
       dietRedMeat: random() < 0.25,
-      newProduct: false,
       medTaken: random() < 0.85,
-      notes: null,
     };
 
     await saveCheckIn(db, checkIn);

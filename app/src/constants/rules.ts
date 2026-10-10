@@ -21,7 +21,7 @@ interface Spec {
 const orMore = (text: string, edge: Edge): string =>
   edge === 'zero' ? `${text} or less` : edge === 'full' ? `${text} or more` : text;
 
-const SPECS: Readonly<Record<string, Spec>> = {
+const SPECS: Record<string, Spec> = {
   skin_climbing: {
     heading: 'Skin today vs. your usual',
     reading: (v, e) => (v === 0 ? 'Same as usual' : orMore(`${v} above usual`, e)),

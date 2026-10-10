@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { useTheme } from '../hooks/useTheme';
-import { MIN_TOUCH_TARGET, radius, spacing, type Gradient } from '../theme';
+import { MIN_TOUCH_TARGET, radius, spacing } from '../theme';
 import { CheckIcon } from './icons';
 import { PressableScale } from './motion';
 import { Txt } from './primitives';
@@ -55,9 +55,6 @@ export interface ScaleSliderProps {
   minAnchor: string;
   maxAnchor: string;
   unit?: string;
-  placeholder?: string;
-  gradient?: Gradient;
-  compact?: boolean;
 }
 
 export function ScaleSlider({
@@ -70,14 +67,10 @@ export function ScaleSlider({
   minAnchor,
   maxAnchor,
   unit = '',
-  placeholder = 'Not set',
-  gradient,
-  compact = false,
 }: ScaleSliderProps): React.ReactElement {
   const { palette } = useTheme();
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
-  const ramp = gradient ?? palette.gradients.primary;
 
   const onLayout = useCallback((event: LayoutChangeEvent) => {
     const next = event.nativeEvent.layout.width;
@@ -112,7 +105,7 @@ export function ScaleSlider({
   const isSet = value !== null;
 
   return (
-    <View style={{ marginBottom: compact ? spacing.lg : spacing.xl }}>
+    <View style={{ marginBottom: spacing.xl }}>
       <View style={styles.headerRow}>
         <Txt variant="label">{label}</Txt>
         <View
@@ -124,7 +117,7 @@ export function ScaleSlider({
           }}
         >
           <Txt variant="label" tone={isSet ? 'accent' : 'faint'}>
-            {isSet ? `${value}${unit}` : placeholder}
+            {isSet ? `${value}${unit}` : 'Not set'}
           </Txt>
         </View>
       </View>
@@ -142,7 +135,7 @@ export function ScaleSlider({
           style={[styles.track, { backgroundColor: palette.surfaceSunken }]}
         >
           {isSet && fillWidth > 0 ? (
-            <View style={{ width: fillWidth, height: TRACK_HEIGHT, backgroundColor: ramp.to }} />
+            <View style={{ width: fillWidth, height: TRACK_HEIGHT, backgroundColor: palette.primary }} />
           ) : null}
         </View>
         <View
@@ -152,7 +145,7 @@ export function ScaleSlider({
             {
               left: thumbLeft,
               backgroundColor: palette.surface,
-              borderColor: isSet ? ramp.to : palette.borderStrong,
+              borderColor: isSet ? palette.primary : palette.borderStrong,
               shadowColor: palette.shadow,
             },
           ]}
@@ -200,56 +193,6 @@ export function ChipToggle({
         <Txt variant="label" style={{ color: value ? palette.onAccent : palette.text }}>
           {label}
         </Txt>
-      </View>
-    </PressableScale>
-  );
-}
-
-export function SelectableCard({
-  label,
-  hint,
-  value,
-  onChange,
-}: {
-  label: string;
-  hint?: string;
-  value: boolean;
-  onChange: (next: boolean) => void;
-}): React.ReactElement {
-  const { palette } = useTheme();
-  return (
-    <PressableScale
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: value }}
-      accessibilityLabel={hint ? `${label}. ${hint}` : label}
-      onPress={() => onChange(!value)}
-      scaleTo={0.985}
-      style={[
-        styles.selectable,
-        {
-          backgroundColor: value ? palette.primarySoft : palette.surfaceAlt,
-          borderColor: value ? palette.primary : 'transparent',
-        },
-      ]}
-    >
-      <View
-        style={[
-          styles.tick,
-          {
-            backgroundColor: value ? palette.primary : 'transparent',
-            borderColor: value ? palette.primary : palette.borderStrong,
-          },
-        ]}
-      >
-        {value ? <CheckIcon size={14} color={palette.onAccent} /> : null}
-      </View>
-      <View style={{ flex: 1 }}>
-        <Txt variant="label">{label}</Txt>
-        {hint ? (
-          <Txt variant="caption" tone="faint" style={{ marginTop: 2 }}>
-            {hint}
-          </Txt>
-        ) : null}
       </View>
     </PressableScale>
   );
@@ -318,7 +261,7 @@ export function ChoiceRow<T extends string>({
   options: readonly T[];
   value: T | null;
   onChange: (next: T) => void;
-  labels: Readonly<Record<T, string>>;
+  labels: Record<T, string>;
 }): React.ReactElement {
   const { palette } = useTheme();
   return (
@@ -421,25 +364,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     borderRadius: radius.pill,
     borderWidth: 1,
-  },
-  selectable: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 64,
-    borderRadius: radius.lg,
-    borderWidth: 1.5,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    marginBottom: spacing.sm,
-    gap: spacing.md,
-  },
-  tick: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderWidth: 1.8,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 

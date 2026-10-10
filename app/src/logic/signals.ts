@@ -3,7 +3,7 @@ import type { Series } from './frame';
 
 // Gets the number a rule looks at, like the average stress from 7 to 14 days ago.
 export function lookUp(
-  columns: Readonly<Record<string, Series>>,
+  columns: Record<string, Series>,
   spec: LookAt,
   index: number,
 ): number | null {
@@ -14,7 +14,7 @@ export function lookUp(
   const to = spec.how === 'today' ? 0 : (spec.to ?? 0);
 
   const values: number[] = [];
-  for (let i = Math.max(0, index - to); i <= index - from; i += 1) {
+  for (let i = Math.max(0, index - to); i <= index - from; i++) {
     const v = series[i];
     if (v !== null && v !== undefined) values.push(v);
   }

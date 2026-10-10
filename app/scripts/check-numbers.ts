@@ -14,10 +14,10 @@ function parseCsv(path: string): Map<number, FrameInputRow[]> {
   const header = lines[0].split(',');
   const byPatient = new Map<number, FrameInputRow[]>();
 
-  for (let i = 1; i < lines.length; i += 1) {
+  for (let i = 1; i < lines.length; i++) {
     const cells = lines[i].split(',');
     const row: Record<string, string | number | null> = {};
-    for (let c = 0; c < header.length; c += 1) {
+    for (let c = 0; c < header.length; c++) {
       const raw = cells[c];
       row[header[c]] = raw === '' || raw === undefined ? null : raw;
     }
@@ -35,7 +35,7 @@ function labelFor(severity: (number | null)[], baseline: (number | null)[], t: n
   const base = baseline[t];
   if (base === null) return null;
   let peak = -Infinity;
-  for (let k = 1; k <= HORIZON_DAYS; k += 1) {
+  for (let k = 1; k <= HORIZON_DAYS; k++) {
     const value = severity[t + k];
     if (value === null || value === undefined) return null;
     peak = Math.max(peak, value);
@@ -73,7 +73,7 @@ function main(): void {
     const severity = frame.columns.severity;
     const baseline = frame.columns.severity_baseline;
 
-    for (let t = MIN_HISTORY_DAYS; t < frame.dates.length; t += 1) {
+    for (let t = MIN_HISTORY_DAYS; t < frame.dates.length; t++) {
       const label = labelFor(severity, baseline, t);
       if (label === null) continue;
       if (!canPredict(frame, t)) continue;
@@ -91,7 +91,7 @@ function main(): void {
   for (let cut = 10; cut <= 70; cut += 2) {
     let flagged = 0;
     let hits = 0;
-    for (let i = 0; i < n; i += 1) {
+    for (let i = 0; i < n; i++) {
       if (scores[i] >= cut) {
         flagged += 1;
         hits += labels[i];
@@ -113,7 +113,7 @@ function main(): void {
   ] as const) {
     let count = 0;
     let hits = 0;
-    for (let i = 0; i < n; i += 1) {
+    for (let i = 0; i < n; i++) {
       if (scores[i] >= lo && scores[i] < hi) {
         count += 1;
         hits += labels[i];

@@ -6,15 +6,7 @@ import { ScrollView, TextInput, View } from 'react-native';
 import { ChoiceRow, StepProgress, ToggleRow } from '../../src/components/inputs';
 import { CheckIcon, LeafIcon, PinIcon, ShieldIcon, WatchIcon } from '../../src/components/icons';
 import { Reveal } from '../../src/components/motion';
-import {
-  Button,
-  Card,
-  IconBadge,
-  Kicker,
-  Screen,
-  Txt,
-} from '../../src/components/primitives';
-import { HEALTH_ENABLED } from '../../src/api/health';
+import { Button, Card, IconBadge, Kicker, Screen, Txt } from '../../src/components/primitives';
 import { DISCLAIMER_FULL } from '../../src/constants/copy';
 import { saveProfile } from '../../src/db/queries';
 import { useApp } from '../../src/hooks/appState';
@@ -255,13 +247,9 @@ export default function OnboardingScreen(): React.ReactElement {
           </Txt>
 
           <Card style={{ marginTop: spacing.xl }}>
-            <Txt variant="label">
-              {HEALTH_ENABLED ? 'Reading sleep, resting HR, steps' : 'Not yet connected'}
-            </Txt>
+            <Txt variant="label">Not yet connected</Txt>
             <Txt variant="caption" tone="faint" style={{ marginTop: spacing.sm, lineHeight: 18 }}>
-              {HEALTH_ENABLED
-                ? 'Read once a day. Flare Down never writes anything to Fitbit.'
-                : 'Fitbit support is coming soon. Until then you enter your sleep in the check-in.'}
+              Fitbit support is coming soon. Until then you enter your sleep in the check-in.
             </Txt>
           </Card>
 

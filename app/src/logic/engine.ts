@@ -3,31 +3,29 @@ import { fraction, lookUp } from './signals';
 import type { RiskBand, Rulebook } from './rulebook';
 
 export interface RuleScore {
-  readonly id: string;
-  readonly label: string;
-  readonly variable: string;
-  readonly points: number;
-  readonly maxPoints: number;
-  readonly direction: 'increases' | 'decreases';
+  id: string;
+  label: string;
+  variable: string;
+  points: number;
+  maxPoints: number;
+  direction: 'increases' | 'decreases';
 }
 
 export interface RiskScore {
-  readonly score: number;
-  readonly band: RiskBand;
-  readonly rules: readonly RuleScore[];
+  score: number;
+  band: RiskBand;
+  rules: readonly RuleScore[];
 }
 
 export const POINTS_FLOOR = 1;
 export const TOP_RULE_COUNT = 3;
 
-// Low under 30, Elevated 30-49, High 50 and up (set in rulebook.json).
 export function bandFor(score: number, book: Rulebook): RiskBand {
   if (score >= book.bands.high) return 'high';
   if (score >= book.bands.elevated) return 'elevated';
   return 'low';
 }
 
-// Adds up the points from every rule for one day.
 export function scoreDay(frame: DailyFrame, index: number, book: Rulebook): RiskScore {
   const rules: RuleScore[] = [];
   let total = 0;

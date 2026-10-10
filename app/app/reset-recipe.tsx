@@ -12,7 +12,7 @@ export default function RecipeScreen(): React.ReactElement {
   const recipe = RECIPES.find((r) => r.id === params.id) ?? RECIPES[0];
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
       <Stack.Screen options={{ title: 'Recipe' }} />
       <Reveal>
         <Txt variant="title">{recipe.title}</Txt>

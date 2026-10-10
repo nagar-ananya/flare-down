@@ -51,7 +51,7 @@ export default function SettingsProfileScreen(): React.ReactElement {
         </Card>
       </View>
 
-      <Card tone="alt" level={1} style={{ marginTop: spacing.xl }}>
+      <Card tone="alt" style={{ marginTop: spacing.xl }}>
         <Txt variant="caption" tone="muted" style={{ lineHeight: 19 }}>
           Changing your profile does not change how your score is worked out.
         </Txt>

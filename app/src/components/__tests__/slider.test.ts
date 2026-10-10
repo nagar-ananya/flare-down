@@ -69,7 +69,7 @@ describe('round trip', () => {
   });
 
   it('never collapses to the minimum in the upper half of the track', () => {
-    for (let value = 8; value <= 15; value += 1) {
+    for (let value = 8; value <= 15; value++) {
       const left = positionFromValue(value, WIDTH, 0, 15);
       const centre = left + THUMB_SIZE / 2;
       expect(valueFromPosition(centre, WIDTH, 0, 15, 1)).toBe(value);

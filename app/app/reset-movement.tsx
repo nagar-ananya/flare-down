@@ -27,7 +27,6 @@ export default function MovementTimerScreen(): React.ReactElement {
       alarm.ring();
       setRinging(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clock.done]);
 
   const stopAlarm = (): void => {
@@ -38,7 +37,7 @@ export default function MovementTimerScreen(): React.ReactElement {
   const progress = 1 - clock.secondsLeft / total;
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
       <Stack.Screen options={{ title: 'Movement' }} />
       <Reveal>
         <Txt variant="title">{timer.title}</Txt>
@@ -48,7 +47,7 @@ export default function MovementTimerScreen(): React.ReactElement {
       </Reveal>
 
       <Reveal delay={60}>
-        <Card level={2} style={{ marginTop: spacing.xl, alignItems: 'center', paddingVertical: spacing.xxl }}>
+        <Card style={{ marginTop: spacing.xl, alignItems: 'center', paddingVertical: spacing.xxl }}>
           <Txt
             style={{
               fontSize: 76,

@@ -15,7 +15,7 @@ export interface FactorExplanation {
   lagTo: number;
 }
 
-export const FACTOR_EXPLANATIONS: Readonly<Record<string, FactorExplanation>> = {
+export const FACTOR_EXPLANATIONS: Record<string, FactorExplanation> = {
   stress: {
     description:
       'Stress is one of the most common psoriasis triggers people report. It can work both ways, since flares are stressful too.',

@@ -4,12 +4,9 @@ import type { FrameInputRow } from '../logic/frame';
 import type {
   CheckIn,
   EnvironmentDay,
-  JournalEntry,
   PredictionRecord,
   Profile,
   PsoriasisType,
-  RiskBand,
-  StoredAiOpinion,
   WearableDay,
 } from '../types/models';
 import { addDays, todayLocal } from '../utils/dates';
@@ -188,7 +185,6 @@ export async function countCheckInDays(db: SQLiteDatabase): Promise<number> {
   return row?.n ?? 0;
 }
 
-// One check-in per day. Saving the same day again replaces it.
 export async function saveCheckIn(db: SQLiteDatabase, checkIn: CheckIn): Promise<void> {
   const now = new Date().toISOString();
   await db.runAsync(
@@ -246,33 +242,33 @@ export async function upsertEnvironment(
     db.withTransactionAsync(async () => {
       for (const day of days) {
         await db.runAsync(
-        `INSERT INTO environment
-           (date, temp_mean_c, temp_min_c, temp_max_c, humidity_mean_pct, dew_point_c,
-            pressure_hpa, uv_index_max, precipitation_mm, wind_speed_max,
-            pm2_5, pm10, ozone, pollen_total, is_forecast, fetched_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-         ON CONFLICT(date) DO UPDATE SET
-           temp_mean_c = excluded.temp_mean_c, temp_min_c = excluded.temp_min_c,
-           temp_max_c = excluded.temp_max_c, humidity_mean_pct = excluded.humidity_mean_pct,
-           dew_point_c = excluded.dew_point_c, pressure_hpa = excluded.pressure_hpa,
-           uv_index_max = excluded.uv_index_max, precipitation_mm = excluded.precipitation_mm,
-           wind_speed_max = excluded.wind_speed_max, pm2_5 = excluded.pm2_5,
-           pm10 = excluded.pm10, ozone = excluded.ozone, pollen_total = excluded.pollen_total,
-           is_forecast = excluded.is_forecast, fetched_at = excluded.fetched_at;`,
-        day.date,
-        day.tempMeanC,
-        day.tempMinC,
-        day.tempMaxC,
-        day.humidityMeanPct,
-        day.dewPointC,
-        day.pressureHpa,
-        day.uvIndexMax,
-        day.precipitationMm,
-        day.windSpeedMax,
-        day.pm25,
-        day.pm10,
-        day.ozone,
-        day.pollenTotal,
+          `INSERT INTO environment
+             (date, temp_mean_c, temp_min_c, temp_max_c, humidity_mean_pct, dew_point_c,
+              pressure_hpa, uv_index_max, precipitation_mm, wind_speed_max,
+              pm2_5, pm10, ozone, pollen_total, is_forecast, fetched_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(date) DO UPDATE SET
+             temp_mean_c = excluded.temp_mean_c, temp_min_c = excluded.temp_min_c,
+             temp_max_c = excluded.temp_max_c, humidity_mean_pct = excluded.humidity_mean_pct,
+             dew_point_c = excluded.dew_point_c, pressure_hpa = excluded.pressure_hpa,
+             uv_index_max = excluded.uv_index_max, precipitation_mm = excluded.precipitation_mm,
+             wind_speed_max = excluded.wind_speed_max, pm2_5 = excluded.pm2_5,
+             pm10 = excluded.pm10, ozone = excluded.ozone, pollen_total = excluded.pollen_total,
+             is_forecast = excluded.is_forecast, fetched_at = excluded.fetched_at;`,
+          day.date,
+          day.tempMeanC,
+          day.tempMinC,
+          day.tempMaxC,
+          day.humidityMeanPct,
+          day.dewPointC,
+          day.pressureHpa,
+          day.uvIndexMax,
+          day.precipitationMm,
+          day.windSpeedMax,
+          day.pm25,
+          day.pm10,
+          day.ozone,
+          day.pollenTotal,
           int(day.isForecast),
           day.fetchedAt,
         );
@@ -320,11 +316,6 @@ export async function getLastEnvironmentFetch(db: SQLiteDatabase): Promise<strin
   return row?.fetched_at ?? null;
 }
 
-export async function countEnvironmentDays(db: SQLiteDatabase): Promise<number> {
-  const row = await db.getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM environment;');
-  return row?.n ?? 0;
-}
-
 export async function upsertWearable(
   db: SQLiteDatabase,
   days: readonly WearableDay[],
@@ -334,18 +325,18 @@ export async function upsertWearable(
     db.withTransactionAsync(async () => {
       for (const day of days) {
         await db.runAsync(
-        `INSERT INTO wearable (date, sleep_hours, sleep_efficiency, resting_hr, hrv, steps, source, fetched_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-         ON CONFLICT(date) DO UPDATE SET
-           sleep_hours = excluded.sleep_hours, sleep_efficiency = excluded.sleep_efficiency,
-           resting_hr = excluded.resting_hr, hrv = excluded.hrv, steps = excluded.steps,
-           source = excluded.source, fetched_at = excluded.fetched_at;`,
-        day.date,
-        day.sleepHours,
-        day.sleepEfficiency,
-        day.restingHr,
-        day.hrv,
-        day.steps,
+          `INSERT INTO wearable (date, sleep_hours, sleep_efficiency, resting_hr, hrv, steps, source, fetched_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(date) DO UPDATE SET
+             sleep_hours = excluded.sleep_hours, sleep_efficiency = excluded.sleep_efficiency,
+             resting_hr = excluded.resting_hr, hrv = excluded.hrv, steps = excluded.steps,
+             source = excluded.source, fetched_at = excluded.fetched_at;`,
+          day.date,
+          day.sleepHours,
+          day.sleepEfficiency,
+          day.restingHr,
+          day.hrv,
+          day.steps,
           day.source,
           day.fetchedAt,
         );
@@ -388,96 +379,6 @@ export async function setMeta(db: SQLiteDatabase, key: string, value: string): P
   );
 }
 
-export async function deleteMeta(db: SQLiteDatabase, key: string): Promise<void> {
-  await db.runAsync('DELETE FROM meta WHERE key = ?;', key);
-}
-
-export async function getAiOpinion(
-  db: SQLiteDatabase,
-  date: string,
-): Promise<StoredAiOpinion | null> {
-  const row = await db.getFirstAsync<{
-    date: string;
-    score: number;
-    band: string;
-    factor_ids: string;
-    summary: string;
-    model: string;
-    created_at: string;
-  }>('SELECT * FROM ai_opinion WHERE date = ?;', date);
-  if (!row) return null;
-
-  let factorIds: string[] = [];
-  try {
-    const parsed: unknown = JSON.parse(row.factor_ids);
-    if (Array.isArray(parsed)) factorIds = parsed as string[];
-  } catch {
-    console.warn('[flare-down] could not parse stored ai factor_ids');
-  }
-
-  return {
-    date: row.date,
-    score: row.score,
-    band: row.band as RiskBand,
-    factorIds,
-    summary: row.summary,
-    model: row.model,
-    createdAt: row.created_at,
-  };
-}
-
-export async function saveAiOpinion(db: SQLiteDatabase, opinion: StoredAiOpinion): Promise<void> {
-  await db.runAsync(
-    `INSERT INTO ai_opinion (date, score, band, factor_ids, summary, model, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(date) DO UPDATE SET
-       score = excluded.score, band = excluded.band, factor_ids = excluded.factor_ids,
-       summary = excluded.summary, model = excluded.model, created_at = excluded.created_at;`,
-    opinion.date,
-    opinion.score,
-    opinion.band,
-    JSON.stringify(opinion.factorIds),
-    opinion.summary,
-    opinion.model,
-    opinion.createdAt,
-  );
-}
-
-export async function clearAiOpinions(db: SQLiteDatabase): Promise<void> {
-  await db.runAsync('DELETE FROM ai_opinion;');
-}
-
-interface JournalRow {
-  id: number;
-  date: string;
-  body: string;
-  created_at: string;
-}
-
-export async function saveJournalEntry(
-  db: SQLiteDatabase,
-  date: string,
-  body: string,
-): Promise<void> {
-  await db.runAsync(
-    'INSERT INTO journal_entry (date, body, created_at) VALUES (?, ?, ?);',
-    date,
-    body,
-    new Date().toISOString(),
-  );
-}
-
-export async function listJournalEntries(
-  db: SQLiteDatabase,
-  limit = 20,
-): Promise<JournalEntry[]> {
-  const rows = await db.getAllAsync<JournalRow>(
-    'SELECT * FROM journal_entry ORDER BY created_at DESC LIMIT ?;',
-    limit,
-  );
-  return rows.map((row) => ({ id: row.id, date: row.date, body: row.body, createdAt: row.created_at }));
-}
-
 export async function insertPrediction(
   db: SQLiteDatabase,
   record: Omit<PredictionRecord, 'id'>,
@@ -495,44 +396,6 @@ export async function insertPrediction(
   );
 }
 
-export async function getRecentPredictions(
-  db: SQLiteDatabase,
-  limit = 30,
-): Promise<PredictionRecord[]> {
-  const rows = await db.getAllAsync<{
-    id: number;
-    computed_at: string;
-    for_date: string;
-    probability: number;
-    band: string;
-    model_version: string;
-    top_features: string;
-    source: string | null;
-  }>('SELECT * FROM prediction ORDER BY computed_at DESC LIMIT ?;', limit);
-
-  return rows.map((row) => ({
-    id: row.id,
-    computedAt: row.computed_at,
-    forDate: row.for_date,
-    probability: row.probability,
-    band: row.band as RiskBand,
-    modelVersion: row.model_version,
-    topFeatures: safeParse(row.top_features),
-    source: (row.source as PredictionRecord['source']) ?? 'local',
-  }));
-}
-
-function safeParse(json: string): { feature: string; contribution: number }[] {
-  try {
-    const parsed: unknown = JSON.parse(json);
-    return Array.isArray(parsed) ? (parsed as { feature: string; contribution: number }[]) : [];
-  } catch {
-    console.warn('[flare-down] could not parse stored top_features');
-    return [];
-  }
-}
-
-// Check-ins, weather and wearable data joined into one row per day for scoring.
 export async function loadFeatureInputRows(
   db: SQLiteDatabase,
   endDate: string = todayLocal(),

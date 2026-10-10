@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { useTheme } from '../hooks/useTheme';
-import { radius, spacing } from '../theme';
+import { spacing } from '../theme';
 import { CheckIcon, ChevronRight } from './icons';
 import { PressableScale } from './motion';
 import { Card, Txt } from './primitives';
@@ -35,7 +35,6 @@ export function ChecklistRow({
           alignItems: 'center',
           gap: spacing.md,
           minHeight: 64,
-          borderColor: done ? palette.primary : palette.border,
         }}
       >
         <View
@@ -81,7 +80,6 @@ export function BreathingRing({
   const { palette } = useTheme();
   const scale = useRef(new Animated.Value(0.82)).current;
   const [phaseIndex, setPhaseIndex] = useState(0);
-  const total = useMemo(() => pattern.reduce((a, b) => a + b, 0) || 1, [pattern]);
 
   useEffect(() => {
     if (!playing || pattern.length === 0) return;
@@ -111,8 +109,6 @@ export function BreathingRing({
     };
   }, [playing, pattern, scale]);
 
-  const label = phaseLabels[phaseIndex] || '';
-
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       <Animated.View
@@ -137,16 +133,11 @@ export function BreathingRing({
         />
       </Svg>
       <View style={{ alignItems: 'center', width: size * 0.9 }}>
-        <Txt variant="title">{label || '—'}</Txt>
+        <Txt variant="title">{phaseLabels[phaseIndex] || '—'}</Txt>
         <Txt variant="caption" tone="faint" center style={{ alignSelf: 'stretch', marginTop: 4 }}>
-          {pattern.map((p) => `${p}`).join(' - ')}
+          {pattern.join(' - ')}
         </Txt>
-      </View>
-      <View style={{ position: 'absolute', bottom: 0, opacity: 0 }}>
-        <Txt variant="caption">{`${total}s cycle`}</Txt>
       </View>
     </View>
   );
 }
-
-export const RESET_CARD_RADIUS = radius.lg;

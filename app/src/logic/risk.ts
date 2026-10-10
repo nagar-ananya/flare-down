@@ -26,12 +26,11 @@ export type RiskState =
     };
 
 export interface DayRules {
-  readonly date: string;
-  readonly score: number;
-  readonly rules: readonly RuleScore[];
+  date: string;
+  score: number;
+  rules: readonly RuleScore[];
 }
 
-// Works out what the Today screen should show.
 export function deriveRiskState(rows: readonly FrameInputRow[], book: Rulebook): RiskState {
   const frame = buildDailyFrame(rows);
   const days = checkinDayCount(frame);
@@ -48,7 +47,7 @@ export function deriveRiskState(rows: readonly FrameInputRow[], book: Rulebook):
   const result = scoreDay(frame, index, book);
   const first = Math.max(0, index - RECENT_WINDOW + 1);
   const history: DayRules[] = [];
-  for (let i = first; i <= index; i += 1) {
+  for (let i = first; i <= index; i++) {
     const day = scoreDay(frame, i, book);
     history.push({ date: frame.dates[i], score: day.score, rules: day.rules });
   }

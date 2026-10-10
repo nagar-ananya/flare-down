@@ -5,48 +5,47 @@ export type RiskBand = 'low' | 'elevated' | 'high';
 export type How = 'today' | 'average' | 'highest' | 'lowest' | 'total';
 
 export interface LookAt {
-  readonly column: string;
-  readonly how: How;
-  readonly from?: number;
-  readonly to?: number;
+  column: string;
+  how: How;
+  from?: number;
+  to?: number;
 }
 
 export interface Rule {
-  readonly id: string;
-  readonly label: string;
-  readonly variable: string;
-  readonly points: number;
-  readonly look_at: LookAt;
-  readonly low: number;
-  readonly high: number;
+  id: string;
+  label: string;
+  variable: string;
+  points: number;
+  look_at: LookAt;
+  low: number;
+  high: number;
 }
 
 export interface RulebookResults {
-  readonly measured_at: string;
-  readonly panel_seed: number;
-  readonly tested_on_patients: string;
-  readonly tested_on_days: number;
-  readonly base_rate: number;
-  readonly flare_rate_when_high: number;
-  readonly flare_rate_when_low: number;
-  readonly recall_at_high: number;
-  readonly average_precision: number;
-  readonly trigger_recovery: number;
-  readonly trigger_recovery_by_chance: number;
+  measured_at: string;
+  panel_seed: number;
+  tested_on_patients: string;
+  tested_on_days: number;
+  base_rate: number;
+  flare_rate_when_high: number;
+  flare_rate_when_low: number;
+  recall_at_high: number;
+  average_precision: number;
+  trigger_recovery: number;
+  trigger_recovery_by_chance: number;
 }
 
 export interface Rulebook {
-  readonly schema_version: number;
-  readonly rulebook_version: string;
-  readonly authored_at: string;
-  readonly horizon_hours: number;
-  readonly min_days_required: number;
-  readonly bands: { readonly elevated: number; readonly high: number };
-  readonly results: RulebookResults;
-  readonly rules: readonly Rule[];
+  schema_version: number;
+  rulebook_version: string;
+  authored_at: string;
+  horizon_hours: number;
+  min_days_required: number;
+  bands: { elevated: number; high: number };
+  results: RulebookResults;
+  rules: readonly Rule[];
 }
 
-// The 12 rules live in assets/rulebook.json.
 export const rulebook = rulebookJson as unknown as Rulebook;
 
 export function ruleNumber(id: string, book: Rulebook = rulebook): number {

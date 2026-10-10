@@ -50,7 +50,7 @@ export default function ResetCategoryScreen(): React.ReactElement {
   const category = RESET_CATEGORIES.find((c) => c.key === params.key) ?? RESET_CATEGORIES[0];
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
       <Stack.Screen options={{ title: category.title }} />
       <Reveal>
         <View style={{ gap: spacing.md }}>

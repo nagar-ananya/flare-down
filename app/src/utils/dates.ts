@@ -26,12 +26,8 @@ export function daysBetween(from: string, to: string): number {
 export function dateRange(from: string, to: string): string[] {
   const out: string[] = [];
   const span = daysBetween(from, to);
-  for (let i = 0; i <= span; i += 1) out.push(addDays(from, i));
+  for (let i = 0; i <= span; i++) out.push(addDays(from, i));
   return out;
-}
-
-export function isValidDate(date: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(date));
 }
 
 export function isEditableDate(date: string, today: string = todayLocal()): boolean {
@@ -58,14 +54,6 @@ export function formatLong(date: string): string {
 export function formatShort(date: string): string {
   const dt = localDate(date);
   return `${dt.getDate()} ${MONTHS[dt.getMonth()].slice(0, 3)}`;
-}
-
-export function formatRelative(date: string, today: string = todayLocal()): string {
-  const delta = daysBetween(date, today);
-  if (delta === 0) return 'Today';
-  if (delta === 1) return 'Yesterday';
-  if (delta > 1 && delta < 7) return `${delta} days ago`;
-  return formatShort(date);
 }
 
 export function weekdayInitial(date: string): string {

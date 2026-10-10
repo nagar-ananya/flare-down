@@ -10,8 +10,7 @@ export function useAlarm(): { ring: (repeat?: boolean) => void; stop: () => void
   const stop = useCallback(() => {
     try {
       player.pause();
-    } catch {
-    }
+    } catch {}
     Vibration.cancel();
   }, [player]);
 

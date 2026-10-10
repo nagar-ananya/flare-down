@@ -31,7 +31,7 @@ export async function runMigrations(db: SQLiteDatabase): Promise<number> {
   const current = await readVersion(db);
   if (current >= SCHEMA_VERSION) return current;
 
-  for (let version = current; version < MIGRATIONS.length; version += 1) {
+  for (let version = current; version < MIGRATIONS.length; version++) {
     for (const statement of MIGRATIONS[version]) {
       await db.execAsync(statement);
     }

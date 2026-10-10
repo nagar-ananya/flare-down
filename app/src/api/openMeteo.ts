@@ -6,7 +6,6 @@ const AIR_QUALITY_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 
 const TIMEOUT_MS = 10_000;
 const RETRY_DELAYS_MS = [1_000, 4_000];
-// Fetch at most once an hour, and refresh after 6 hours.
 export const MIN_FETCH_INTERVAL_MS = 60 * 60 * 1000;
 export const STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 
@@ -68,7 +67,7 @@ async function getJsonWithRetry(
   url: string,
   params: Record<string, string>,
 ): Promise<unknown | null> {
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt += 1) {
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     try {
       return await getJson(url, params);
     } catch (error) {
@@ -93,49 +92,28 @@ function numberArray(value: unknown, length: number): (number | null)[] | null {
   return value.map((item) => (typeof item === 'number' && Number.isFinite(item) ? item : null));
 }
 
-interface DailyBlock {
+interface Block {
   time: string[];
   values: Record<string, (number | null)[]>;
 }
 
-function parseDaily(payload: unknown, fields: readonly string[]): DailyBlock | null {
-  if (!isRecord(payload) || !isRecord(payload.daily)) return null;
-  const daily = payload.daily;
-  const time = daily.time;
+function parseBlock(payload: unknown, key: 'daily' | 'hourly', fields: readonly string[]): Block | null {
+  if (!isRecord(payload) || !isRecord(payload[key])) return null;
+  const block = payload[key];
+  const time = block.time;
   if (!Array.isArray(time) || time.length === 0 || !time.every((t) => typeof t === 'string')) {
     return null;
   }
   const values: Record<string, (number | null)[]> = {};
   for (const field of fields) {
-    const parsed = numberArray(daily[field], time.length);
+    const parsed = numberArray(block[field], time.length);
+    if (block[field] !== undefined && parsed === null) return null;
     values[field] = parsed ?? new Array<number | null>(time.length).fill(null);
-    if (daily[field] !== undefined && parsed === null) return null;
   }
   return { time: time as string[], values };
 }
 
-interface HourlyBlock {
-  time: string[];
-  values: Record<string, (number | null)[]>;
-}
-
-function parseHourly(payload: unknown, fields: readonly string[]): HourlyBlock | null {
-  if (!isRecord(payload) || !isRecord(payload.hourly)) return null;
-  const hourly = payload.hourly;
-  const time = hourly.time;
-  if (!Array.isArray(time) || time.length === 0 || !time.every((t) => typeof t === 'string')) {
-    return null;
-  }
-  const values: Record<string, (number | null)[]> = {};
-  for (const field of fields) {
-    const parsed = numberArray(hourly[field], time.length);
-    values[field] = parsed ?? new Array<number | null>(time.length).fill(null);
-    if (hourly[field] !== undefined && parsed === null) return null;
-  }
-  return { time: time as string[], values };
-}
-
-function aggregateDaily(block: HourlyBlock): Map<string, Record<string, number | null>> {
+function aggregateDaily(block: Block): Map<string, Record<string, number | null>> {
   const sums = new Map<string, Record<string, { total: number; count: number }>>();
 
   block.time.forEach((stamp, index) => {
@@ -193,13 +171,13 @@ export async function fetchEnvironment(
     getJsonWithRetry(AIR_QUALITY_URL, { ...common, hourly: HOURLY_AQ_FIELDS }),
   ]);
 
-  const daily = parseDaily(weatherRaw, DAILY_FIELDS.split(','));
+  const daily = parseBlock(weatherRaw, 'daily', DAILY_FIELDS.split(','));
   if (!daily) {
     console.warn('[flare-down] rejected malformed weather payload');
     return { days: [], ok: false };
   }
 
-  const hourly = parseHourly(airRaw, HOURLY_AQ_FIELDS.split(','));
+  const hourly = parseBlock(airRaw, 'hourly', HOURLY_AQ_FIELDS.split(','));
   if (airRaw !== null && !hourly) {
     console.warn('[flare-down] rejected malformed air-quality payload');
   }
@@ -234,16 +212,16 @@ export async function fetchEnvironment(
   return { days, ok: true };
 }
 
+function olderThan(timestamp: string | null, ms: number, now: number): boolean {
+  if (!timestamp) return true;
+  const last = Date.parse(timestamp);
+  return Number.isNaN(last) || now - last >= ms;
+}
+
 export function canFetch(lastFetchedAt: string | null, now: number = Date.now()): boolean {
-  if (!lastFetchedAt) return true;
-  const last = Date.parse(lastFetchedAt);
-  if (Number.isNaN(last)) return true;
-  return now - last >= MIN_FETCH_INTERVAL_MS;
+  return olderThan(lastFetchedAt, MIN_FETCH_INTERVAL_MS, now);
 }
 
 export function isStale(lastFetchedAt: string | null, now: number = Date.now()): boolean {
-  if (!lastFetchedAt) return true;
-  const last = Date.parse(lastFetchedAt);
-  if (Number.isNaN(last)) return true;
-  return now - last >= STALE_AFTER_MS;
+  return olderThan(lastFetchedAt, STALE_AFTER_MS, now);
 }

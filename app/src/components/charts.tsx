@@ -1,16 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Easing,
-  PanResponder,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
-import Svg, { Circle, G, Line, Path, Rect } from 'react-native-svg';
+import { PanResponder, View, type StyleProp, type ViewStyle } from 'react-native';
+import Svg, { Circle, G, Line, Path } from 'react-native-svg';
 
 import { useTheme } from '../hooks/useTheme';
-import { radius, severityWord, spacing, type Gradient, type Palette } from '../theme';
+import { radius, severityWord, spacing, type Palette } from '../theme';
 import { formatShort } from '../utils/dates';
 import { PressableScale } from './motion';
 import { Txt } from './primitives';
@@ -28,12 +21,10 @@ export function nearestIndex(x: number, width: number, count: number): number {
   return Math.min(count - 1, Math.max(0, Math.round(x / step)));
 }
 
-// Line chart of scores. Touch or drag to see one day.
 export function TrendChart({
   points,
   height = 96,
   max = 10,
-  gradient,
   showDots = true,
   interactive = false,
   describe = (value: number) => `${value} (${severityWord(value)})`,
@@ -41,16 +32,14 @@ export function TrendChart({
   points: readonly TrendPoint[];
   height?: number;
   max?: number;
-  gradient?: Gradient;
   showDots?: boolean;
   interactive?: boolean;
   describe?: (value: number) => string;
 }): React.ReactElement {
   const { palette } = useTheme();
-  const [width, setWidth] = React.useState(0);
+  const [width, setWidth] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const ramp = gradient ?? palette.gradients.trend;
-  const ink = ramp.to;
+  const ink = palette.primary;
 
   const top = interactive ? 40 : 12;
   const bottom = height - 14;
@@ -274,177 +263,6 @@ export function DayRibbon({
   );
 }
 
-export interface FactorBar {
-  name: string;
-  label: string;
-  value: number;
-  direction: 'increases' | 'decreases';
-}
-
-export function DivergingBars({
-  bars,
-  onSelect,
-}: {
-  bars: readonly FactorBar[];
-  onSelect: (bar: FactorBar) => void;
-}): React.ReactElement {
-  const { palette } = useTheme();
-  const peak = Math.max(...bars.map((b) => Math.abs(b.value)), 1e-6);
-
-  return (
-    <View style={{ gap: spacing.md }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Txt variant="micro" tone="faint" style={{ textTransform: 'uppercase' }}>
-          ← lowers risk
-        </Txt>
-        <Txt variant="micro" tone="faint" style={{ textTransform: 'uppercase' }}>
-          raises risk →
-        </Txt>
-      </View>
-
-      {bars.map((bar) => {
-        const raises = bar.direction === 'increases';
-        const ratio = Math.abs(bar.value) / peak;
-        const gradient = raises ? palette.gradients.high : palette.gradients.low;
-        const tint = raises ? palette.bandHighText : palette.bandLowText;
-
-        return (
-          <PressableScale
-            key={bar.name}
-            onPress={() => onSelect(bar)}
-            accessibilityLabel={`${bar.label}, ${raises ? 'raises risk' : 'lowers risk'}`}
-            accessibilityHint="Opens an explanation of this factor"
-            scaleTo={0.985}
-            style={{ minHeight: 46, justifyContent: 'center' }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: spacing.sm,
-                marginBottom: 7,
-              }}
-            >
-              <Txt variant="label" numberOfLines={1} style={{ flex: 1 }}>
-                {bar.label}
-              </Txt>
-              <Txt variant="caption" style={{ color: tint }}>
-                {raises ? 'raises' : 'lowers'}
-              </Txt>
-            </View>
-            <View style={{ height: 12, flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                {!raises ? <Bar ratio={ratio} gradient={gradient} align="right" /> : null}
-              </View>
-              <View style={{ width: 1.5, height: 18, backgroundColor: palette.borderStrong }} />
-              <View style={{ flex: 1 }}>
-                {raises ? <Bar ratio={ratio} gradient={gradient} align="left" /> : null}
-              </View>
-            </View>
-          </PressableScale>
-        );
-      })}
-    </View>
-  );
-}
-
-function Bar({
-  ratio,
-  gradient,
-  align,
-}: {
-  ratio: number;
-  gradient: Gradient;
-  align: 'left' | 'right';
-}): React.ReactElement {
-  const grow = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    const animation = Animated.timing(grow, {
-      toValue: 1,
-      duration: 640,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    });
-    animation.start();
-    return () => animation.stop();
-  }, [grow]);
-
-  const width = grow.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', `${Math.max(ratio * 100, 4)}%`],
-  });
-
-  return (
-    <Animated.View
-      style={{
-        width,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: gradient.from,
-        alignSelf: align === 'right' ? 'flex-end' : 'flex-start',
-      }}
-    />
-  );
-}
-
-export function LagTimeline({
-  from,
-  to,
-  horizon = 14,
-  max = 21,
-}: {
-  from: number;
-  to: number;
-  horizon?: number;
-  max?: number;
-}): React.ReactElement {
-  const { palette } = useTheme();
-  const [width, setWidth] = React.useState(0);
-  const height = 54;
-  const trackY = 20;
-  const x = (day: number): number => (day / max) * width;
-
-  return (
-    <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)} style={{ height }}>
-      {width > 0 ? (
-        <Svg width={width} height={height}>
-          <Rect x={0} y={trackY} width={width} height={8} rx={4} fill={palette.surfaceAlt} />
-          <Rect
-            x={x(from)}
-            y={trackY - 3}
-            width={Math.max(x(to) - x(from), 6)}
-            height={14}
-            rx={7}
-            fill={palette.primary}
-          />
-          <Line
-            x1={x(horizon)}
-            y1={trackY - 10}
-            x2={x(horizon)}
-            y2={trackY + 18}
-            stroke={palette.borderStrong}
-            strokeWidth={1.5}
-            strokeDasharray="3 3"
-          />
-          {[0, 7, 14, 21].map((day) => (
-            <G key={day}>
-              <Circle cx={x(day)} cy={trackY + 4} r={1.5} fill={palette.textFaint} />
-            </G>
-          ))}
-        </Svg>
-      ) : null}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: -12 }}>
-        <Txt variant="caption" tone="faint">
-          today
-        </Txt>
-        <Txt variant="caption" tone="faint">
-          {`${max} days`}
-        </Txt>
-      </View>
-    </View>
-  );
-}
-
 const WEEKDAY_HEADERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export function severityColor(severity: number | null, palette: Palette): string {
@@ -453,7 +271,6 @@ export function severityColor(severity: number | null, palette: Palette): string
   return palette.heat[index];
 }
 
-// One month, with each logged day colored by how bad the skin was.
 export function MonthCalendar({
   month,
   severities,
@@ -565,41 +382,6 @@ export function SeverityLegend({ style }: { style?: StyleProp<ViewStyle> }): Rea
     </View>
   );
 }
-
-export function MiniRing({
-  fraction,
-  size = 44,
-  color,
-  track,
-}: {
-  fraction: number;
-  size?: number;
-  color: string;
-  track: string;
-}): React.ReactElement {
-  const stroke = 4;
-  const r = size / 2 - stroke;
-  const circumference = 2 * Math.PI * r;
-  return (
-    <Svg width={size} height={size}>
-      <Circle cx={size / 2} cy={size / 2} r={r} stroke={track} strokeWidth={stroke} fill="none" />
-      <Circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        stroke={color}
-        strokeWidth={stroke}
-        fill="none"
-        strokeLinecap="round"
-        strokeDasharray={`${circumference * Math.min(Math.max(fraction, 0), 1)} ${circumference}`}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
-    </Svg>
-  );
-}
-
-export { radius as chartRadius };
-export type { Palette as ChartPalette };
 
 export function RuleChart({
   points,

@@ -15,7 +15,7 @@ export const PSORIASIS_TYPES: readonly PsoriasisType[] = [
   'unknown',
 ];
 
-export const PSORIASIS_TYPE_LABELS: Readonly<Record<PsoriasisType, string>> = {
+export const PSORIASIS_TYPE_LABELS: Record<PsoriasisType, string> = {
   plaque: 'Plaque',
   guttate: 'Guttate',
   inverse: 'Inverse',
@@ -59,39 +59,6 @@ export interface CheckIn {
   areas: string[];
 }
 
-export const BODY_AREAS = [
-  'scalp',
-  'face',
-  'elbows',
-  'hands',
-  'trunk',
-  'knees',
-  'feet',
-  'nails',
-  'other',
-] as const;
-
-export type BodyArea = (typeof BODY_AREAS)[number];
-
-export const BODY_AREA_LABELS: Readonly<Record<BodyArea, string>> = {
-  scalp: 'Scalp',
-  face: 'Face',
-  elbows: 'Elbows',
-  hands: 'Hands',
-  trunk: 'Trunk',
-  knees: 'Knees',
-  feet: 'Feet',
-  nails: 'Nails',
-  other: 'Other',
-};
-
-export interface JournalEntry {
-  id: number;
-  date: string;
-  body: string;
-  createdAt: string;
-}
-
 export interface EnvironmentDay {
   date: string;
   tempMeanC: number | null;
@@ -122,10 +89,6 @@ export interface WearableDay {
   fetchedAt: string;
 }
 
-export function wearableSourceLabel(source: WearableDay['source']): string {
-  return source === 'healthkit' ? 'Apple Health' : 'Fitbit';
-}
-
 export interface PredictionRecord {
   id: number;
   computedAt: string;
@@ -135,16 +98,6 @@ export interface PredictionRecord {
   modelVersion: string;
   topFeatures: { feature: string; contribution: number }[];
   source?: 'local' | 'ai';
-}
-
-export interface StoredAiOpinion {
-  date: string;
-  score: number;
-  band: RiskBand;
-  factorIds: string[];
-  summary: string;
-  model: string;
-  createdAt: string;
 }
 
 export function emptyCheckIn(date: string): CheckIn {

@@ -13,7 +13,7 @@ export default function SettingsModelScreen(): React.ReactElement {
   const { bands } = rulebook;
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: 100 }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Txt tone="muted" style={{ lineHeight: 22 }}>
         {`Flare Down's score is a simple points system made for this project. Each of the ${rulebook.rules.length} rules can add up to a set number of points. Add them up and you get your score, from 0 to 100.`}
       </Txt>
@@ -47,7 +47,7 @@ export default function SettingsModelScreen(): React.ReactElement {
         </Txt>
       </Card>
 
-      <Card tone="alt" level={1} style={{ marginTop: spacing.xl }}>
+      <Card tone="alt" style={{ marginTop: spacing.xl }}>
         <Kicker>Disclaimer</Kicker>
         <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 21 }}>
           {DISCLAIMER_FULL}

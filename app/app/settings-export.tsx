@@ -32,7 +32,7 @@ export default function SettingsExportScreen(): React.ReactElement {
   };
 
   return (
-    <Screen aurora={false} edges={[]} contentStyle={{ paddingBottom: 100 }}>
+    <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Txt tone="muted" style={{ lineHeight: 22 }}>
         Save all your check-ins as a CSV file you can open in a spreadsheet.
       </Txt>

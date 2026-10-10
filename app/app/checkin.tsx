@@ -18,18 +18,19 @@ import {
 import { rulebook, useApp } from '../src/hooks/appState';
 import { useTheme } from '../src/hooks/useTheme';
 import { deriveRiskState, withDraftCheckIn, type RiskState } from '../src/logic/risk';
-import { ruleNumber, type Rule } from '../src/logic/rulebook';
+import { ruleNumber } from '../src/logic/rulebook';
 import { bandStyle, radius, spacing } from '../src/theme';
 import { emptyCheckIn, type CheckIn, type EnvironmentDay } from '../src/types/models';
 import { isEditableDate, todayLocal } from '../src/utils/dates';
 
 // The weather rules are filled in automatically, so they are not asked.
-const AUTO_RULES: readonly Rule[] = rulebook.rules.filter(
+const AUTO_RULES = rulebook.rules.filter(
   (rule) => !CHECKIN_QUESTIONS.some((q) => q.rule === rule.id),
 );
 
-const WEATHER_READINGS: Readonly<
-  Record<string, { field: keyof EnvironmentDay; format: (v: number) => string }>
+const WEATHER_READINGS: Record<
+  string,
+  { field: keyof EnvironmentDay; format: (v: number) => string }
 > = {
   pm2_5: { field: 'pm25', format: (v) => `PM2.5 ${Math.round(v)}` },
   temp_delta_1d: { field: 'tempMeanC', format: (v) => `${Math.round((v * 9) / 5 + 32)}°F today` },
@@ -334,7 +335,6 @@ function ReviewStep({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db, date, draftSignature]);
 
   return (
@@ -343,7 +343,7 @@ function ReviewStep({
       <Txt tone="muted" style={{ marginTop: spacing.sm, marginBottom: spacing.xl }}>
         {`You answered ${CHECKIN_QUESTIONS.length} rules and the weather filled in ${AUTO_RULES.length}. Press Save to keep it.`}
       </Txt>
-      <Card level={2}>
+      <Card>
         <Outlook before={before} after={after} />
       </Card>
     </Reveal>

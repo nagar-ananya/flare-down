@@ -1,6 +1,5 @@
-import { buildDailyFrame, type FrameInputRow } from '../frame';
+import type { FrameInputRow } from '../frame';
 import { deriveRiskState, withDraftCheckIn } from '../risk';
-import { ruleAverages, scoredDayCount } from '../personal';
 import { rulebook } from '../rulebook';
 import { emptyCheckIn } from '../../types/models';
 import { addDays } from '../../utils/dates';
@@ -91,28 +90,5 @@ describe('withDraftCheckIn', () => {
     if (before.status === 'ready' && after.status === 'ready') {
       expect(after.score).toBeGreaterThan(before.score);
     }
-  });
-});
-
-describe('ruleAverages', () => {
-  it('puts a consistently high factor at the top', () => {
-    const frame = buildDailyFrame(rows(new Array(30).fill(3), { stress: 9, sleep_hours: 7.5 }));
-    const averages = ruleAverages(frame, rulebook);
-    expect(averages[0].id).toBe('stress');
-    expect(averages[0].averagePoints).toBeGreaterThan(10);
-    expect(averages[0].days).toBeGreaterThan(0);
-  });
-
-  it('leaves out rules the person never logged', () => {
-    const frame = buildDailyFrame(rows(new Array(30).fill(3), { stress: 9 }));
-    const ids = ruleAverages(frame, rulebook).map((r) => r.id);
-    expect(ids).not.toContain('pollution');
-    expect(ids).not.toContain('cold_snap');
-  });
-
-  it('is empty when there is not enough history to score any day', () => {
-    const frame = buildDailyFrame(rows([1, 2, 3, 4, 5]));
-    expect(ruleAverages(frame, rulebook)).toEqual([]);
-    expect(scoredDayCount(frame)).toBe(0);
   });
 });
