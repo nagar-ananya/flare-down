@@ -1,68 +1,37 @@
 import React from 'react';
-import { Alert, Switch, View } from 'react-native';
+import { Alert } from 'react-native';
 
-import { SparkIcon } from '../src/components/icons';
-import { Button, Card, IconBadge, Kicker, Pill, Screen, Txt } from '../src/components/primitives';
-import { useTheme } from '../src/hooks/useTheme';
-import { bandStyle, spacing } from '../src/theme';
+import { PressableScale } from '../src/components/motion';
+import { Card, NumberCircle, Screen, Txt } from '../src/components/primitives';
+import { spacing } from '../src/theme';
+
+const AI_OPTIONS = ['TypeSafe', 'Gemini', 'OpenAI'];
 
 export default function SettingsAiScreen(): React.ReactElement {
-  const { palette } = useTheme();
-  const example = bandStyle('elevated', palette);
-
-  const onConnect = (): void => {
-    Alert.alert('Coming soon', 'The TypeSafe connection is not built yet. This screen is a preview.');
-  };
-
   return (
     <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
-      <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-        <IconBadge background={palette.primarySoft} size={48}>
-          <SparkIcon size={22} color={palette.primary} />
-        </IconBadge>
-        <View style={{ flex: 1 }}>
-          <Txt variant="heading">TypeSafe</Txt>
-          <Txt variant="caption" tone="muted" style={{ marginTop: 2 }}>
-            AI second opinion on your score
-          </Txt>
-        </View>
-        <Pill label="Not connected" color={palette.textMuted} background={palette.surfaceAlt} />
-      </Card>
-
-      <Button label="Connect TypeSafe" onPress={onConnect} style={{ marginTop: spacing.lg }} />
-
-      <Card style={{ marginTop: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-        <View style={{ flex: 1 }}>
-          <Txt variant="label">Daily second opinion</Txt>
-          <Txt variant="caption" tone="faint" style={{ marginTop: 2 }}>
-            Connect TypeSafe first
-          </Txt>
-        </View>
-        <Switch value={false} disabled />
-      </Card>
-
-      <Kicker style={{ marginTop: spacing.xl, marginBottom: spacing.sm }}>What you would see</Kicker>
-      <Card tone="alt" style={{ borderStyle: 'dashed', borderWidth: 1.5, borderColor: palette.borderStrong }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Kicker>TypeSafe says</Kicker>
-          <Txt variant="caption" tone="faint">
-            Example
-          </Txt>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm }}>
-          <Pill label={example.label} color={example.text} background={example.soft} />
-          <Txt tone="muted">Agrees with your score</Txt>
-        </View>
-        <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 21 }}>
-          Stress from last week and short sleep look like the main reasons today.
-        </Txt>
-      </Card>
-
-      <Kicker style={{ marginTop: spacing.xl, marginBottom: spacing.sm }}>What would be shared</Kicker>
-      <Txt tone="muted" style={{ lineHeight: 22 }}>
-        Only your check-in numbers from the last two weeks. No name and no location. Your score on
-        Today would still come from this phone, and the AI opinion would just show next to it.
+      <Txt tone="muted" style={{ marginBottom: spacing.lg }}>
+        Pick an AI to check your score.
       </Txt>
+      {AI_OPTIONS.map((name) => (
+        <PressableScale
+          key={name}
+          onPress={() => Alert.alert(name, 'Coming soon!')}
+          accessibilityLabel={name}
+          scaleTo={0.99}
+          style={{ marginBottom: spacing.sm }}
+        >
+          <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+            <NumberCircle value={name[0]} size={36} />
+            <Txt variant="label" style={{ flex: 1 }}>
+              {name}
+            </Txt>
+            <Txt variant="caption" tone="faint">
+              Soon
+            </Txt>
+          </Card>
+        </PressableScale>
+      ))}
     </Screen>
   );
 }

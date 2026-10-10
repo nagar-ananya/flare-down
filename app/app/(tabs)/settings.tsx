@@ -87,7 +87,7 @@ export default function SettingsScreen(): React.ReactElement {
       case 'export':
         return `Save your ${days} check-${days === 1 ? 'in' : 'ins'} as a CSV file`;
       case 'ai':
-        return 'TypeSafe (preview)';
+        return 'Coming soon';
       case 'model':
         return `How the ${rulebook.rules.length} rules are scored`;
       case 'delete':
