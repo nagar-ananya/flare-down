@@ -1,6 +1,6 @@
 export const DATABASE_NAME = 'flare-down.db';
 
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export const TABLE_NAMES = [
   'profile',
@@ -137,6 +137,7 @@ export const MIGRATIONS: readonly string[][] = [
     "ALTER TABLE prediction ADD COLUMN source TEXT NOT NULL DEFAULT 'local';",
     CREATE_AI_OPINION,
   ],
+  ['ALTER TABLE checkin RENAME COLUMN alcohol_units TO nightshade_servings;'],
 ];
 
 export const DROP_ALL = [

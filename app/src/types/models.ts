@@ -44,7 +44,7 @@ export interface CheckIn {
   stress: number | null;
   sleepHours: number | null;
   waterGlasses: number | null;
-  alcoholUnits: number | null;
+  nightshadeServings: number | null;
   dietDairy: boolean;
   dietGluten: boolean;
   dietProcessed: boolean;
@@ -108,7 +108,7 @@ export function emptyCheckIn(date: string): CheckIn {
     stress: null,
     sleepHours: null,
     waterGlasses: null,
-    alcoholUnits: null,
+    nightshadeServings: null,
     dietDairy: false,
     dietGluten: false,
     dietProcessed: false,

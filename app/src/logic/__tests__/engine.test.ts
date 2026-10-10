@@ -57,7 +57,7 @@ describe('scoreDay worked example', () => {
   it('leaves out rules with nothing to look at', () => {
     const ids = result.rules.map((r) => r.id);
     expect(ids).not.toContain('illness');
-    expect(ids).not.toContain('alcohol');
+    expect(ids).not.toContain('nightshade');
     expect(ids).not.toContain('processed_food');
   });
 });
@@ -108,7 +108,7 @@ describe('missing data', () => {
       stress: 10,
       sleep_hours: 3,
       itch: 10,
-      alcohol_units: 10,
+      nightshade_servings: 10,
       diet_processed: 1,
       illness: 1,
       sore_throat: 1,

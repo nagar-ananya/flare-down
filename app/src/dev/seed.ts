@@ -21,7 +21,7 @@ const SEVERITY = [3, 4, 3, 3, 4, 3, 2, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 4, 4, 3, 4,
 const ITCH = [2, 3, 2, 2, 3, 2, 1, 2, 2, 3, 2, 2, 3, 2, 2, 3, 2, 3, 3, 2, 3, 3, 2, 2, 3, 3, 3, 4, 5, 5];
 const STRESS = [3, 4, 3, 2, 3, 4, 3, 3, 2, 3, 4, 3, 3, 4, 3, 6, 7, 6, 7, 7, 6, 7, 6, 6, 4, 3, 4, 3, 4, 3];
 const SLEEP = [7.5, 7, 8, 7.5, 7, 7.5, 8, 7, 7.5, 7, 8, 7.5, 7, 7.5, 7, 6, 6.5, 6, 5.5, 6, 6.5, 6, 6.5, 7, 7, 6.5, 6, 6.5, 6, 7];
-const DRINKS = [0, 0, 2, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0];
+const NIGHTSHADES = [0, 0, 2, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0];
 const PROCESSED = [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0];
 
 // Days ago (counting yesterday as 1) for the yes/no answers.
@@ -66,7 +66,7 @@ export async function seedDemoCheckIns(
       itch: ITCH[at],
       stress: STRESS[at],
       sleepHours: SLEEP[at],
-      alcoholUnits: DRINKS[at],
+      nightshadeServings: NIGHTSHADES[at],
       dietProcessed: PROCESSED[at] === 1,
       illness: SICK_DAYS.includes(daysAgo),
       skinInjury: INJURY_DAYS.includes(daysAgo),

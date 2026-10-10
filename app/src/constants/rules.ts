@@ -35,8 +35,8 @@ const SPECS: Record<string, Spec> = {
   itch: { heading: 'Average itch (last 3 days)', reading: (v, e) => orMore(`Itch ${v}`, e) },
   sore_throat: { heading: 'Sore throat (10-14 days ago)', yesNo: true },
   skin_injury: { heading: 'Cut, scrape or sunburn (10-14 days ago)', yesNo: true },
-  alcohol: {
-    heading: 'Drinks a day (last 5 days)',
+  nightshade: {
+    heading: 'Nightshade servings a day (last 5 days)',
     reading: (v, e) => (v === 0 ? 'None' : orMore(`${v}`, e)),
   },
   processed_food: { heading: 'Processed-food days (last 7 days)', reading: (v, e) => orMore(`${v} days`, e) },

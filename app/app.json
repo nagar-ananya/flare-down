@@ -6,15 +6,14 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "primaryColor": "#B8461F",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F7F7EF"
       },
       "predictiveBackGestureEnabled": false,
       "permissions": [
@@ -35,7 +34,15 @@
           "locationWhenInUsePermission": "Flare Down uses your approximate location only to fetch local weather and air quality. It is never shared."
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "backgroundColor": "#FFFFFF"
+        }
+      ]
     ],
     "scheme": "flaredown"
   }

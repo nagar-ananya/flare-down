@@ -29,7 +29,7 @@ interface CheckInRow {
   stress: number | null;
   sleep_hours: number | null;
   water_glasses: number | null;
-  alcohol_units: number | null;
+  nightshade_servings: number | null;
   diet_dairy: number;
   diet_gluten: number;
   diet_processed: number;
@@ -135,7 +135,7 @@ function toCheckIn(row: CheckInRow): CheckIn {
     stress: row.stress,
     sleepHours: row.sleep_hours,
     waterGlasses: row.water_glasses,
-    alcoholUnits: row.alcohol_units,
+    nightshadeServings: row.nightshade_servings,
     dietDairy: bool(row.diet_dairy),
     dietGluten: bool(row.diet_gluten),
     dietProcessed: bool(row.diet_processed),
@@ -189,7 +189,7 @@ export async function saveCheckIn(db: SQLiteDatabase, checkIn: CheckIn): Promise
   const now = new Date().toISOString();
   await db.runAsync(
     `INSERT INTO checkin
-       (date, severity, itch, stress, sleep_hours, water_glasses, alcohol_units,
+       (date, severity, itch, stress, sleep_hours, water_glasses, nightshade_servings,
         diet_dairy, diet_gluten, diet_processed, diet_sugar, diet_red_meat,
         illness, sore_throat, skin_injury, new_product, med_taken, notes, areas,
         created_at, updated_at)
@@ -197,7 +197,7 @@ export async function saveCheckIn(db: SQLiteDatabase, checkIn: CheckIn): Promise
      ON CONFLICT(date) DO UPDATE SET
        severity = excluded.severity, itch = excluded.itch, stress = excluded.stress,
        sleep_hours = excluded.sleep_hours, water_glasses = excluded.water_glasses,
-       alcohol_units = excluded.alcohol_units, diet_dairy = excluded.diet_dairy,
+       nightshade_servings = excluded.nightshade_servings, diet_dairy = excluded.diet_dairy,
        diet_gluten = excluded.diet_gluten, diet_processed = excluded.diet_processed,
        diet_sugar = excluded.diet_sugar, diet_red_meat = excluded.diet_red_meat,
        illness = excluded.illness, sore_throat = excluded.sore_throat,
@@ -210,7 +210,7 @@ export async function saveCheckIn(db: SQLiteDatabase, checkIn: CheckIn): Promise
     checkIn.stress,
     checkIn.sleepHours,
     checkIn.waterGlasses,
-    checkIn.alcoholUnits,
+    checkIn.nightshadeServings,
     int(checkIn.dietDairy),
     int(checkIn.dietGluten),
     int(checkIn.dietProcessed),
@@ -438,7 +438,7 @@ export async function loadFeatureInputRows(
       stress: c.stress,
       sleep_hours: c.sleep_hours,
       water_glasses: c.water_glasses,
-      alcohol_units: c.alcohol_units,
+      nightshade_servings: c.nightshade_servings,
       diet_dairy: c.diet_dairy,
       diet_gluten: c.diet_gluten,
       diet_processed: c.diet_processed,
@@ -477,7 +477,7 @@ export async function loadFeatureInputRows(
 }
 
 const CSV_COLUMNS = [
-  'date', 'severity', 'itch', 'stress', 'sleep_hours', 'water_glasses', 'alcohol_units',
+  'date', 'severity', 'itch', 'stress', 'sleep_hours', 'water_glasses', 'nightshade_servings',
   'diet_dairy', 'diet_gluten', 'diet_processed', 'diet_sugar', 'diet_red_meat',
   'illness', 'sore_throat', 'skin_injury', 'new_product', 'med_taken', 'notes', 'areas',
   'temp_mean_c', 'humidity_mean_pct', 'dew_point_c', 'pressure_hpa', 'uv_index_max',

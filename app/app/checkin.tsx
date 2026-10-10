@@ -83,7 +83,7 @@ export default function CheckInScreen(): React.ReactElement {
           itch: previous?.itch ?? null,
           stress: previous?.stress ?? null,
           sleepHours: device?.sleepHours ?? previous?.sleepHours ?? 8,
-          alcoholUnits: 0,
+          nightshadeServings: 0,
         });
       }
       setLoaded(true);

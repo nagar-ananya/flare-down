@@ -275,7 +275,7 @@ export function categoryPath(key: ResetCategoryKey): { pathname: string; params?
 const VARIABLE_CATEGORY: Partial<Record<string, ResetCategoryKey>> = {
   stress: 'breath',
   sleep_hours: 'move',
-  alcohol_units: 'eat',
+  nightshade_servings: 'eat',
   diet_processed: 'eat',
   illness: 'skin',
   sore_throat: 'skin',

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "rulebook_version": "2.1.0",
-  "authored_at": "2026-10-04",
+  "rulebook_version": "2.2.0",
+  "authored_at": "2026-10-10",
   "horizon_hours": 72,
   "min_days_required": 14,
   "bands": {
@@ -120,12 +120,12 @@
       "high": 1
     },
     {
-      "id": "alcohol",
-      "label": "Alcohol",
-      "variable": "alcohol_units",
+      "id": "nightshade",
+      "label": "Nightshade vegetables",
+      "variable": "nightshade_servings",
       "points": 5,
       "look_at": {
-        "column": "alcohol_units",
+        "column": "nightshade_servings",
         "how": "average",
         "from": 0,
         "to": 4

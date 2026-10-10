@@ -206,8 +206,8 @@ export default function SettingsScreen(): React.ReactElement {
         <Reveal delay={130}>
           <Card style={{ marginTop: spacing.md, borderStyle: 'dashed', borderWidth: 1.5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-              <IconBadge background={palette.aquaSoft}>
-                <FlaskIcon size={18} color={palette.aqua} />
+              <IconBadge background={palette.blueSoft}>
+                <FlaskIcon size={18} color={palette.blue} />
               </IconBadge>
               <View style={{ flex: 1 }}>
                 <Txt variant="heading">Developer tools</Txt>

@@ -22,7 +22,7 @@ const CATEGORY_ICON: Record<
 const CATEGORY_TINT: Record<ResetCategory['icon'], (palette: Palette) => Tint> = {
   wind: (palette) => palette.tints.sage,
   bowl: (palette) => palette.tints.butter,
-  move: (palette) => palette.tints.lilac,
+  move: (palette) => palette.tints.peach,
   drop: (palette) => palette.tints.sky,
 };
 

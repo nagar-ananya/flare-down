@@ -6,7 +6,7 @@ export const SELF_VARS = [
   'stress',
   'sleep_hours',
   'water_glasses',
-  'alcohol_units',
+  'nightshade_servings',
   'diet_dairy',
   'diet_gluten',
   'diet_processed',

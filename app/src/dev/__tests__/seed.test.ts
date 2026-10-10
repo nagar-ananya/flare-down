@@ -25,7 +25,7 @@ async function scoreWithToday(db: Db, change: Partial<CheckIn>): Promise<RiskSta
     itch: previous?.itch ?? null,
     stress: previous?.stress ?? null,
     sleepHours: previous?.sleepHours ?? 8,
-    alcoholUnits: 0,
+    nightshadeServings: 0,
     ...change,
   };
   const rows = await loadFeatureInputRows(db, today);
@@ -59,7 +59,7 @@ describe('demo seed', () => {
 
   it('goes clearly into High after a bad check-in', async () => {
     const after = score(
-      await scoreWithToday(db, { severity: 8, itch: 8, stress: 8, sleepHours: 5, alcoholUnits: 2, dietProcessed: true }),
+      await scoreWithToday(db, { severity: 8, itch: 8, stress: 8, sleepHours: 5, nightshadeServings: 2, dietProcessed: true }),
     );
     expect(after).toBeGreaterThanOrEqual(rulebook.bands.high + 10);
     expect(after - before).toBeGreaterThanOrEqual(15);

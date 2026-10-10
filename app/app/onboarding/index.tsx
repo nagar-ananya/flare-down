@@ -179,8 +179,8 @@ export default function OnboardingScreen(): React.ReactElement {
 
       {step === 'location' ? (
         <Reveal>
-          <IconBadge background={palette.aquaSoft} size={54}>
-            <PinIcon size={26} color={palette.aqua} />
+          <IconBadge background={palette.blueSoft} size={54}>
+            <PinIcon size={26} color={palette.blue} />
           </IconBadge>
 
           <Txt variant="title" style={{ marginTop: spacing.lg }}>

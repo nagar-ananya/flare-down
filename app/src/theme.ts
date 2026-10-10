@@ -21,8 +21,8 @@ export interface Palette {
   primary: string;
   primaryDeep: string;
   primarySoft: string;
-  aqua: string;
-  aquaSoft: string;
+  blue: string;
+  blueSoft: string;
 
   bandLowText: string;
   bandLowFill: string;
@@ -40,7 +40,7 @@ export interface Palette {
   tints: {
     sage: Tint;
     butter: Tint;
-    lilac: Tint;
+    peach: Tint;
     sky: Tint;
   };
 
@@ -52,22 +52,22 @@ export interface Palette {
 // No red anywhere near the risk score, the top band is orange.
 export const palette: Palette = {
   background: '#FFFFFF',
-  surface: '#F4F2F6',
-  surfaceAlt: '#EAE6EE',
-  surfaceSunken: '#E0DBE5',
-  border: '#E4E0E8',
-  borderStrong: '#CBC5D1',
+  surface: '#F6F3F0',
+  surfaceAlt: '#EDE8E3',
+  surfaceSunken: '#E3DCD5',
+  border: '#E9E3DD',
+  borderStrong: '#CFC6BD',
 
-  text: '#1E1A22',
-  textMuted: '#544E5A',
-  textFaint: '#625C68',
+  text: '#211C19',
+  textMuted: '#554D47',
+  textFaint: '#645B54',
   onAccent: '#FFFFFF',
 
-  primary: '#8E44AD',
-  primaryDeep: '#6C3483',
-  primarySoft: '#F2E7F7',
-  aqua: '#137262',
-  aquaSoft: '#DDF2EC',
+  primary: '#B8461F',
+  primaryDeep: '#963718',
+  primarySoft: '#FDECE5',
+  blue: '#2C6FA3',
+  blueSoft: '#E3EFF8',
 
   bandLowText: '#1D7447',
   bandLowFill: '#52B77A',
@@ -85,11 +85,11 @@ export const palette: Palette = {
   tints: {
     sage: { ink: '#22704F', soft: '#E0F2E7' },
     butter: { ink: '#80590A', soft: '#FCF0CF' },
-    lilac: { ink: '#6A44A8', soft: '#EEE6FA' },
+    peach: { ink: '#A84520', soft: '#FCE8DE' },
     sky: { ink: '#22668F', soft: '#E0EEF8' },
   },
 
-  heat: ['#EEECF0', '#D7F0E0', '#ABDDBE', '#F8DE9C', '#F5B595', '#EA8A6A'],
+  heat: ['#EEEAE6', '#D7F0E0', '#ABDDBE', '#F8DE9C', '#F5B595', '#EA8A6A'],
 
   shadow: '#000000',
 };

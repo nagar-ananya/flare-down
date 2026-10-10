@@ -24,20 +24,33 @@ async function writeVersion(db: SQLiteDatabase, version: number): Promise<void> 
   );
 }
 
+// Each step and its version bump commit together, and the version is checked again
+// under the write lock, so a crash or a second app start can't apply a step twice.
+async function applyMigration(db: SQLiteDatabase, version: number): Promise<void> {
+  await db.execAsync('BEGIN IMMEDIATE;');
+  try {
+    if ((await readVersion(db)) === version) {
+      for (const statement of MIGRATIONS[version]) {
+        await db.execAsync(statement);
+      }
+      await writeVersion(db, version + 1);
+    }
+    await db.execAsync('COMMIT;');
+  } catch (error) {
+    await db.execAsync('ROLLBACK;');
+    throw error;
+  }
+}
+
 export async function runMigrations(db: SQLiteDatabase): Promise<number> {
   await db.execAsync('PRAGMA journal_mode = WAL;');
   await db.execAsync('PRAGMA foreign_keys = ON;');
+  await db.execAsync('PRAGMA busy_timeout = 5000;');
 
-  const current = await readVersion(db);
-  if (current >= SCHEMA_VERSION) return current;
-
-  for (let version = current; version < MIGRATIONS.length; version++) {
-    for (const statement of MIGRATIONS[version]) {
-      await db.execAsync(statement);
-    }
+  for (let version = await readVersion(db); version < MIGRATIONS.length; version++) {
+    await applyMigration(db, version);
   }
-  await writeVersion(db, SCHEMA_VERSION);
-  return SCHEMA_VERSION;
+  return readVersion(db);
 }
 
 export async function resetDatabase(db: SQLiteDatabase): Promise<void> {

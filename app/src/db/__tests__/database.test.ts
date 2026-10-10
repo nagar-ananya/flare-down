@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 import { resetDatabase, runMigrations } from '../migrations';
-import { SCHEMA_VERSION, TABLE_NAMES } from '../schema';
+import { MIGRATIONS, SCHEMA_VERSION, TABLE_NAMES } from '../schema';
 import {
   countCheckInDays,
   deleteCheckIn,
@@ -64,6 +64,19 @@ describe('migrations', () => {
     await runMigrations(db);
     expect(await countCheckInDays(db)).toBe(1);
   });
+
+  it('renames alcohol_units to nightshade_servings on an older database', async () => {
+    const db = await SQLite.openDatabaseAsync(':memory:');
+    for (const migration of MIGRATIONS.slice(0, 4)) {
+      for (const statement of migration) await db.execAsync(statement);
+    }
+    await db.runAsync("INSERT INTO meta (key, value) VALUES ('schema_version', '4');");
+    await db.runAsync(
+      "INSERT INTO checkin (date, severity, alcohol_units, created_at, updated_at) VALUES ('2026-01-01', 4, 2, 'x', 'x');",
+    );
+    await runMigrations(db);
+    expect((await getCheckIn(db, '2026-01-01'))?.nightshadeServings).toBe(2);
+  });
 });
 
 describe('check-ins', () => {
@@ -75,7 +88,7 @@ describe('check-ins', () => {
       stress: 8,
       sleepHours: 6.5,
       waterGlasses: 5,
-      alcoholUnits: 2.5,
+      nightshadeServings: 2.5,
       dietDairy: true,
       dietSugar: true,
       illness: true,

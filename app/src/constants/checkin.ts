@@ -1,4 +1,4 @@
-type NumberField = 'severity' | 'itch' | 'stress' | 'sleepHours' | 'alcoholUnits';
+type NumberField = 'severity' | 'itch' | 'stress' | 'sleepHours' | 'nightshadeServings';
 type YesNoField = 'illness' | 'soreThroat' | 'skinInjury' | 'dietProcessed';
 
 export type CheckInQuestion =
@@ -15,7 +15,7 @@ export type CheckInQuestion =
       kind: 'count';
       rule: string;
       short: string;
-      field: Extract<NumberField, 'sleepHours' | 'alcoholUnits'>;
+      field: Extract<NumberField, 'sleepHours' | 'nightshadeServings'>;
       question: string;
       unit: string;
       step: number;
@@ -90,11 +90,11 @@ export const CHECKIN_QUESTIONS: readonly CheckInQuestion[] = [
   },
   {
     kind: 'count',
-    rule: 'alcohol',
-    short: 'Alcohol',
-    field: 'alcoholUnits',
-    question: 'How many alcoholic drinks today?',
-    unit: 'drinks',
+    rule: 'nightshade',
+    short: 'Nightshade vegetables',
+    field: 'nightshadeServings',
+    question: 'How many servings of nightshade vegetables (tomato, potato, peppers, eggplant) today?',
+    unit: 'servings',
     step: 1,
     max: 12,
   },

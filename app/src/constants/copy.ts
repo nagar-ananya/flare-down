@@ -37,9 +37,9 @@ export const FACTOR_EXPLANATIONS: Record<string, FactorExplanation> = {
     lagFrom: 0,
     lagTo: 3,
   },
-  alcohol_units: {
+  nightshade_servings: {
     description:
-      'Some studies have linked drinking alcohol with worse psoriasis, mostly at higher amounts.',
+      'Many people with psoriasis say nightshade vegetables, like tomatoes, potatoes, peppers and eggplant, make their skin worse. This comes from surveys, not proof.',
     typicalLag: 'Usually 2 to 5 days.',
     lagFrom: 2,
     lagTo: 5,

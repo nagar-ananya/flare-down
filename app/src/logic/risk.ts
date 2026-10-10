@@ -74,7 +74,7 @@ export function withDraftCheckIn(
     stress: draft.stress,
     sleep_hours: draft.sleepHours,
     water_glasses: draft.waterGlasses,
-    alcohol_units: draft.alcoholUnits,
+    nightshade_servings: draft.nightshadeServings,
     diet_dairy: draft.dietDairy ? 1 : 0,
     diet_gluten: draft.dietGluten ? 1 : 0,
     diet_processed: draft.dietProcessed ? 1 : 0,

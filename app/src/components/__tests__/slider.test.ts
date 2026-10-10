@@ -59,7 +59,7 @@ describe('round trip', () => {
     ['severity 0-10', 0, 10, 1],
     ['water 0-15', 0, 15, 1],
     ['sleep 0-12 by halves', 0, 12, 0.5],
-    ['alcohol 0-12 by halves', 0, 12, 0.5],
+    ['servings 0-12 by halves', 0, 12, 0.5],
   ])('is stable for %s', (_label, min, max, step) => {
     for (let value = min; value <= max; value += step) {
       const left = positionFromValue(value, WIDTH, min, max);
