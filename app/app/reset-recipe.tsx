@@ -4,10 +4,13 @@ import { View } from 'react-native';
 
 import { Reveal } from '../src/components/motion';
 import { Card, Kicker, NumberCircle, Screen, Txt } from '../src/components/primitives';
+import { RecipeArt } from '../src/components/recipe-art';
 import { RECIPES } from '../src/constants/reset';
-import { spacing } from '../src/theme';
+import { useTheme } from '../src/hooks/useTheme';
+import { radius, spacing } from '../src/theme';
 
 export default function RecipeScreen(): React.ReactElement {
+  const { palette } = useTheme();
   const params = useLocalSearchParams<{ id?: string }>();
   const recipe = RECIPES.find((r) => r.id === params.id) ?? RECIPES[0];
 
@@ -21,8 +24,21 @@ export default function RecipeScreen(): React.ReactElement {
         </Txt>
       </Reveal>
 
+      <Reveal delay={30}>
+        <View
+          style={{
+            marginTop: spacing.lg,
+            borderRadius: radius.xl,
+            overflow: 'hidden',
+            backgroundColor: palette.primarySoft,
+          }}
+        >
+          <RecipeArt id={recipe.id} />
+        </View>
+      </Reveal>
+
       <Reveal delay={60}>
-        <Card style={{ marginTop: spacing.xl }}>
+        <Card style={{ marginTop: spacing.md }}>
           <Kicker style={{ marginBottom: spacing.sm }}>You need</Kicker>
           {recipe.ingredients.map((item) => (
             <View key={item} style={{ flexDirection: 'row', gap: spacing.sm, paddingVertical: 4 }}>

@@ -2,6 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
 
+import { BandScale } from '../src/components/charts';
 import { ChevronRight } from '../src/components/icons';
 import { PressableScale, Reveal } from '../src/components/motion';
 import { Card, Kicker, NumberCircle, Pill, Screen, ShortDisclaimer, Txt } from '../src/components/primitives';
@@ -46,8 +47,6 @@ export default function RiskDetailScreen(): React.ReactElement {
   }));
   const total = [...partById.values()].reduce((t, v) => t + v, 0);
 
-  const { elevated, high } = rulebook.bands;
-
   return (
     <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Stack.Screen options={{ title: 'How your score adds up' }} />
@@ -64,7 +63,7 @@ export default function RiskDetailScreen(): React.ReactElement {
             </View>
           </View>
 
-          <BandScale score={score} elevated={elevated} high={high} />
+          <BandScale score={score} />
 
           <Txt tone="muted" style={{ marginTop: spacing.lg, lineHeight: 22 }}>
             {`Flare Down checks ${rulebook.rules.length} rules. Each one adds points. Add them up and you get your score.`}
@@ -125,72 +124,6 @@ export default function RiskDetailScreen(): React.ReactElement {
 
       <ShortDisclaimer />
     </Screen>
-  );
-}
-
-function BandScale({
-  score,
-  elevated,
-  high,
-}: {
-  score: number;
-  elevated: number;
-  high: number;
-}): React.ReactElement {
-  const { palette } = useTheme();
-  const at = Math.min(100, Math.max(0, score));
-  return (
-    <View style={{ marginTop: spacing.md }}>
-      <View style={{ height: 22, justifyContent: 'center' }}>
-        <View style={{ flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden' }}>
-          <View style={{ width: `${elevated}%`, backgroundColor: palette.bandLowFill }} />
-          <View style={{ width: `${high - elevated}%`, backgroundColor: palette.bandElevatedFill }} />
-          <View style={{ flex: 1, backgroundColor: palette.bandHighFill }} />
-        </View>
-        {[elevated, high].map((edge) => (
-          <View
-            key={edge}
-            style={{
-              position: 'absolute',
-              left: `${edge}%`,
-              marginLeft: -2,
-              top: 6,
-              width: 4,
-              height: 10,
-              backgroundColor: palette.surface,
-            }}
-          />
-        ))}
-        <View
-          style={{
-            position: 'absolute',
-            left: `${at}%`,
-            marginLeft: -9,
-            top: 2,
-            width: 18,
-            height: 18,
-            borderRadius: 9,
-            backgroundColor: palette.background,
-            borderWidth: 3,
-            borderColor: palette.text,
-          }}
-        />
-      </View>
-      <View style={{ flexDirection: 'row', marginTop: spacing.xs }}>
-        <Txt variant="caption" style={{ width: `${elevated}%`, color: palette.bandLowText, fontWeight: '600' }}>
-          Low
-        </Txt>
-        <Txt
-          variant="caption"
-          style={{ width: `${high - elevated}%`, color: palette.bandElevatedText, fontWeight: '600' }}
-        >
-          Elevated
-        </Txt>
-        <Txt variant="caption" style={{ flex: 1, color: palette.bandHighText, fontWeight: '600' }}>
-          High
-        </Txt>
-      </View>
-    </View>
   );
 }
 

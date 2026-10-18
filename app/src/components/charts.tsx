@@ -3,6 +3,7 @@ import { PanResponder, View, type StyleProp, type ViewStyle } from 'react-native
 import Svg, { Circle, G, Line, Path } from 'react-native-svg';
 
 import { useTheme } from '../hooks/useTheme';
+import { rulebook } from '../logic/rulebook';
 import { radius, severityWord, spacing, type Palette } from '../theme';
 import { formatShort } from '../utils/dates';
 import { PressableScale } from './motion';
@@ -479,6 +480,65 @@ export function RuleChart({
           <Txt variant="caption" tone="faint">Today</Txt>
         </View>
       ) : null}
+    </View>
+  );
+}
+
+export function BandScale({ score }: { score: number }): React.ReactElement {
+  const { palette } = useTheme();
+  const { elevated, high } = rulebook.bands;
+  const at = Math.min(100, Math.max(0, score));
+  return (
+    <View style={{ marginTop: spacing.md }}>
+      <View style={{ height: 22, justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden' }}>
+          <View style={{ width: `${elevated}%`, backgroundColor: palette.bandLowFill }} />
+          <View style={{ width: `${high - elevated}%`, backgroundColor: palette.bandElevatedFill }} />
+          <View style={{ flex: 1, backgroundColor: palette.bandHighFill }} />
+        </View>
+        {[elevated, high].map((edge) => (
+          <View
+            key={edge}
+            style={{
+              position: 'absolute',
+              left: `${edge}%`,
+              marginLeft: -2,
+              top: 6,
+              width: 4,
+              height: 10,
+              backgroundColor: palette.surface,
+            }}
+          />
+        ))}
+        <View
+          style={{
+            position: 'absolute',
+            left: `${at}%`,
+            marginLeft: -9,
+            top: 2,
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            backgroundColor: palette.background,
+            borderWidth: 3,
+            borderColor: palette.text,
+          }}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', marginTop: spacing.xs }}>
+        <Txt variant="caption" style={{ width: `${elevated}%`, color: palette.bandLowText, fontWeight: '600' }}>
+          Low
+        </Txt>
+        <Txt
+          variant="caption"
+          style={{ width: `${high - elevated}%`, color: palette.bandElevatedText, fontWeight: '600' }}
+        >
+          Elevated
+        </Txt>
+        <Txt variant="caption" style={{ flex: 1, color: palette.bandHighText, fontWeight: '600' }}>
+          High
+        </Txt>
+      </View>
     </View>
   );
 }

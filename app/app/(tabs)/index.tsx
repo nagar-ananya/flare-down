@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Share, View } from 'react-native';
 
-import { TrendChart, DayRibbon } from '../../src/components/charts';
+import { BandScale, TrendChart, DayRibbon } from '../../src/components/charts';
 import {
   ChevronRight,
   CloudOffIcon,
@@ -276,12 +276,17 @@ function ReadyCard({
           <Pill label={style.label} color={style.text} background={style.soft} style={{ alignSelf: 'center' }} />
         </View>
 
+        <BandScale score={score} />
+        <Txt variant="caption" tone="muted" style={{ marginTop: spacing.sm }}>
+          Lower is better. A higher score means a flare is more likely.
+        </Txt>
+
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             gap: 4,
-            marginTop: spacing.sm,
+            marginTop: spacing.md,
             paddingTop: spacing.md,
             borderTopWidth: 1,
             borderTopColor: palette.border,

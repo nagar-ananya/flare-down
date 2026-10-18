@@ -1,3 +1,5 @@
+import type { MoveArt } from './moves';
+
 export type ResetCategoryKey = 'breath' | 'eat' | 'move' | 'skin';
 
 export interface ResetCategory {
@@ -203,11 +205,16 @@ export const RECIPES: readonly Recipe[] = [
   },
 ];
 
+export interface MoveStep {
+  text: string;
+  art: MoveArt;
+}
+
 export interface MoveTimer {
   id: string;
   title: string;
   minutes: number;
-  steps: readonly string[];
+  steps: readonly MoveStep[];
 }
 
 export const MOVE_TIMERS: readonly MoveTimer[] = [
@@ -215,31 +222,53 @@ export const MOVE_TIMERS: readonly MoveTimer[] = [
     id: 'desk',
     title: 'Neck & shoulder reset',
     minutes: 3,
-    steps: ['Roll your shoulders back 10 times', 'Tilt your head side to side', 'Stretch your arms overhead'],
+    steps: [
+      { text: 'Roll your shoulders back 10 times', art: 'shoulder-roll' },
+      { text: 'Tilt your head side to side', art: 'head-tilt' },
+      { text: 'Stretch your arms overhead', art: 'arms-overhead' },
+    ],
   },
   {
     id: 'stretch',
     title: 'Stretch break',
     minutes: 5,
-    steps: ['Reach for your toes', 'Stretch each side', 'Gentle twists, both ways'],
+    steps: [
+      { text: 'Reach for your toes', art: 'toe-reach' },
+      { text: 'Stretch each side', art: 'side-bend' },
+      { text: 'Gentle twists, both ways', art: 'standing-twist' },
+    ],
   },
   {
     id: 'bedtime',
     title: 'Bedtime stretch',
     minutes: 8,
-    steps: ['Knees to chest', 'Lying twist, both sides', 'Legs up the wall', 'Slow breaths'],
+    steps: [
+      { text: 'Knees to chest', art: 'knees-to-chest' },
+      { text: 'Lying twist, both sides', art: 'lying-twist' },
+      { text: 'Legs up the wall', art: 'legs-up-wall' },
+      { text: 'Slow breaths', art: 'lying-breath' },
+    ],
   },
   {
     id: 'yoga',
     title: 'Gentle yoga',
     minutes: 10,
-    steps: ['Cat-cow', 'Low lunge, both sides', "Child's pose", 'Lie still and breathe'],
+    steps: [
+      { text: 'Cat-cow', art: 'cat-cow' },
+      { text: 'Low lunge, both sides', art: 'low-lunge' },
+      { text: "Child's pose", art: 'childs-pose' },
+      { text: 'Lie still and breathe', art: 'lying-breath' },
+    ],
   },
   {
     id: 'walk',
     title: 'Walk outside',
     minutes: 15,
-    steps: ['Walk at an easy pace', 'Get some daylight', 'Come back when the timer rings'],
+    steps: [
+      { text: 'Walk at an easy pace', art: 'walk' },
+      { text: 'Get some daylight', art: 'walk-sun' },
+      { text: 'Come back when the timer rings', art: 'walk-timer' },
+    ],
   },
 ];
 

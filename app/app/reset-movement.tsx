@@ -3,7 +3,8 @@ import { useKeepAwake } from 'expo-keep-awake';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import { Reveal } from '../src/components/motion';
+import { PressableScale, Reveal } from '../src/components/motion';
+import { MoveFigure } from '../src/components/move-figure';
 import { Button, Card, Kicker, NumberCircle, Screen, Txt } from '../src/components/primitives';
 import { MOVE_TIMERS } from '../src/constants/reset';
 import { useAlarm } from '../src/hooks/useAlarm';
@@ -35,6 +36,14 @@ export default function MovementTimerScreen(): React.ReactElement {
   };
 
   const progress = 1 - clock.secondsLeft / total;
+  const timerStep = Math.min(timer.steps.length - 1, Math.floor(progress * timer.steps.length));
+  const [picked, setPicked] = useState<number | null>(null);
+  const current = picked ?? timerStep;
+  const step = timer.steps[current];
+
+  useEffect(() => {
+    setPicked(null);
+  }, [timerStep]);
 
   return (
     <Screen edges={[]} contentStyle={{ paddingBottom: spacing.xxl }}>
@@ -46,8 +55,20 @@ export default function MovementTimerScreen(): React.ReactElement {
         </Txt>
       </Reveal>
 
+      <Reveal delay={30}>
+        <Card style={{ marginTop: spacing.lg }}>
+          <View style={{ borderRadius: radius.lg, backgroundColor: palette.blueSoft, overflow: 'hidden' }}>
+            <MoveFigure art={step.art} />
+          </View>
+          <Kicker style={{ marginTop: spacing.md }}>{`Step ${current + 1} of ${timer.steps.length}`}</Kicker>
+          <Txt variant="label" style={{ marginTop: 2 }}>
+            {step.text}
+          </Txt>
+        </Card>
+      </Reveal>
+
       <Reveal delay={60}>
-        <Card style={{ marginTop: spacing.xl, alignItems: 'center', paddingVertical: spacing.xxl }}>
+        <Card style={{ marginTop: spacing.md, alignItems: 'center', paddingVertical: spacing.xl }}>
           <Txt
             style={{
               fontSize: 76,
@@ -108,14 +129,20 @@ export default function MovementTimerScreen(): React.ReactElement {
       <Reveal delay={140}>
         <Card style={{ marginTop: spacing.xl }}>
           <Kicker style={{ marginBottom: spacing.sm }}>What to do</Kicker>
-          {timer.steps.map((step, i) => (
-            <View
-              key={step}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xs }}
-            >
-              <NumberCircle value={i + 1} size={26} />
-              <Txt style={{ flex: 1 }}>{step}</Txt>
-            </View>
+          {timer.steps.map((item, i) => (
+            <PressableScale key={item.text} onPress={() => setPicked(i)} accessibilityLabel={`Show how: ${item.text}`}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xs }}>
+                <NumberCircle
+                  value={i + 1}
+                  size={26}
+                  color={i === current ? undefined : palette.textFaint}
+                  background={i === current ? undefined : palette.surfaceAlt}
+                />
+                <Txt variant={i === current ? 'label' : 'body'} style={{ flex: 1 }}>
+                  {item.text}
+                </Txt>
+              </View>
+            </PressableScale>
           ))}
         </Card>
       </Reveal>
