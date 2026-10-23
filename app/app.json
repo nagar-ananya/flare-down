@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Flare Down",
+    "name": "FlareDown",
     "slug": "flare-down",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -31,7 +31,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Flare Down uses your approximate location only to fetch local weather and air quality. It is never shared."
+          "locationWhenInUsePermission": "FlareDown uses your approximate location only to fetch local weather and air quality. It is never shared."
         }
       ],
       "expo-audio",

@@ -1,5 +1,5 @@
 export const DISCLAIMER_FULL =
-  'Flare Down is an experimental project, not a medical device. It can not diagnose or ' +
+  'FlareDown is an experimental project, not a medical device. It can not diagnose or ' +
   'treat anything, and its scores have not been tested by doctors. This is not ' +
   'medical advice. Always talk to your doctor about your psoriasis, and do not ' +
   'change your treatment because of this app.';
@@ -25,7 +25,7 @@ export const FACTOR_EXPLANATIONS: Record<string, FactorExplanation> = {
   },
   sleep_hours: {
     description:
-      'Not getting enough sleep can make inflammation worse. Flare Down looks at your average sleep over the last week.',
+      'Not getting enough sleep can make inflammation worse. FlareDown looks at your average sleep over the last week.',
     typicalLag: 'Usually 3 to 7 days.',
     lagFrom: 3,
     lagTo: 7,
@@ -74,8 +74,8 @@ export const FACTOR_EXPLANATIONS: Record<string, FactorExplanation> = {
   },
   sore_throat: {
     description:
-      'A strep throat infection is a well known trigger for guttate psoriasis, so Flare Down asks about it on its own.',
-    typicalLag: 'Usually 14 to 21 days. Flare Down only looks back 14 days, so it can miss the end of this.',
+      'A strep throat infection is a well known trigger for guttate psoriasis, so FlareDown asks about it on its own.',
+    typicalLag: 'Usually 14 to 21 days. FlareDown only looks back 14 days, so it can miss the end of this.',
     lagFrom: 14,
     lagTo: 21,
   },
@@ -137,14 +137,14 @@ export const FACTOR_EXPLANATIONS: Record<string, FactorExplanation> = {
   },
   severity_baseline: {
     description:
-      'Your average skin rating over the last two weeks. Flare Down compares each day to this instead of a fixed number.',
+      'Your average skin rating over the last two weeks. FlareDown compares each day to this instead of a fixed number.',
     typicalLag: 'The last 14 days.',
     lagFrom: 0,
     lagTo: 14,
   },
   severity_delta: {
     description:
-      'How far today is above or below your recent average. This is the strongest sign Flare Down has, because skin that has started getting worse often keeps getting worse.',
+      'How far today is above or below your recent average. This is the strongest sign FlareDown has, because skin that has started getting worse often keeps getting worse.',
     typicalLag: 'Today, compared with the last 14 days.',
     lagFrom: 0,
     lagTo: 1,

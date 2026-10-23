@@ -1,6 +1,6 @@
-# Flare Down
+# FlareDown
 
-<img src="app/assets/icon.png" alt="Flare Down logo" width="120">
+<img src="app/assets/icon.png" alt="FlareDown logo" width="120">
 
 A psoriasis tracker. Log a short check-in each day and it gives you a flare risk score from 0 to 100 for the next 3 days. Experimental, not medical advice.
 

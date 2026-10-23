@@ -15,7 +15,7 @@ export default function SettingsModelScreen(): React.ReactElement {
   return (
     <Screen edges={[]} contentStyle={{ paddingBottom: 100 }}>
       <Txt tone="muted" style={{ lineHeight: 22 }}>
-        {`Flare Down's score is a simple points system made for this project. Each of the ${rulebook.rules.length} rules can add up to a set number of points. Add them up and you get your score, from 0 to 100.`}
+        {`FlareDown's score is a simple points system made for this project. Each of the ${rulebook.rules.length} rules can add up to a set number of points. Add them up and you get your score, from 0 to 100.`}
       </Txt>
 
       <Card style={{ marginTop: spacing.xl }}>

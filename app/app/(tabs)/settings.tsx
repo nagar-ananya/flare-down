@@ -229,7 +229,7 @@ export default function SettingsScreen(): React.ReactElement {
 
       <Pressable onPress={onFooterTap} style={{ marginTop: spacing.xl, paddingVertical: spacing.sm }}>
         <Txt variant="caption" tone="faint" center>
-          Flare Down (experimental prototype)
+          FlareDown (experimental prototype)
         </Txt>
       </Pressable>
     </Screen>

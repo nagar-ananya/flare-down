@@ -48,20 +48,19 @@ describe('demo seed', () => {
     expect(await getPreviousCheckIn(db, todayLocal())).not.toBeNull();
   });
 
-  it('lands just under High', () => {
-    expect(before).toBeGreaterThanOrEqual(44);
-    expect(before).toBeLessThan(rulebook.bands.high);
+  it('starts near the Elevated line', () => {
+    expect(Math.abs(before - rulebook.bands.elevated)).toBeLessThanOrEqual(5);
   });
 
-  it('stays under High after a normal check-in', async () => {
-    expect(score(await scoreWithToday(db, {}))).toBeLessThan(rulebook.bands.high);
+  it('barely moves after a normal check-in', async () => {
+    expect(Math.abs(score(await scoreWithToday(db, {})) - before)).toBeLessThanOrEqual(4);
   });
 
-  it('goes clearly into High after a bad check-in', async () => {
+  it('goes into High after a rough check-in', async () => {
     const after = score(
-      await scoreWithToday(db, { severity: 8, itch: 8, stress: 8, sleepHours: 5, nightshadeServings: 2, dietProcessed: true }),
+      await scoreWithToday(db, { severity: 7, itch: 7, stress: 8, sleepHours: 5, nightshadeServings: 2, dietProcessed: true }),
     );
-    expect(after).toBeGreaterThanOrEqual(rulebook.bands.high + 10);
-    expect(after - before).toBeGreaterThanOrEqual(15);
+    expect(after).toBeGreaterThanOrEqual(rulebook.bands.high);
+    expect(after - before).toBeGreaterThanOrEqual(25);
   });
 });

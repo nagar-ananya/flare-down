@@ -276,7 +276,7 @@ function WeatherStep({ conditions }: { conditions: EnvironmentDay | null }): Rea
     <Reveal>
       <Txt variant="title">{`The weather covers the last ${AUTO_RULES.length} rules`}</Txt>
       <Txt tone="muted" style={{ marginTop: spacing.sm, marginBottom: spacing.xl }}>
-        You don't need to answer these. Flare Down gets them from the weather for your area.
+        You don't need to answer these. FlareDown gets them from the weather for your area.
       </Txt>
       <View style={{ gap: spacing.sm }}>
         {AUTO_RULES.map((rule) => {

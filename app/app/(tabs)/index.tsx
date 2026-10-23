@@ -119,7 +119,7 @@ export default function TodayScreen(): React.ReactElement {
       <Reveal>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Txt variant="title" tone="accent">
-            Flare Down
+            FlareDown
           </Txt>
           <PressableScale
             onPress={() => void onExport()}
@@ -330,7 +330,7 @@ function CollectingCard({
       </View>
 
       <Txt tone="muted" style={{ marginTop: spacing.md, lineHeight: 22, maxWidth: 320 }}>
-        Flare Down needs {required} days of check-ins before it can show a score. Some rules look back
+        FlareDown needs {required} days of check-ins before it can show a score. Some rules look back
         up to two weeks, so it needs that much data first.
       </Txt>
 

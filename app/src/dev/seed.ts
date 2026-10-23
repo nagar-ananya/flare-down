@@ -15,17 +15,19 @@ export const DEV_MODE_TAPS = 5;
 export const DEFAULT_SEED_DAYS = 30;
 
 // One value per day, oldest first, ending yesterday. Today is left empty so it
-// can be logged in the demo. The numbers put the score just under High (50),
-// so a bad check-in today pushes it over.
-const SEVERITY = [3, 4, 3, 3, 4, 3, 2, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 4, 4, 3, 4, 4, 3, 3, 4, 4, 4, 4, 5, 5];
-const ITCH = [2, 3, 2, 2, 3, 2, 1, 2, 2, 3, 2, 2, 3, 2, 2, 3, 2, 3, 3, 2, 3, 3, 2, 2, 3, 3, 3, 4, 5, 5];
-const STRESS = [3, 4, 3, 2, 3, 4, 3, 3, 2, 3, 4, 3, 3, 4, 3, 6, 7, 6, 7, 7, 6, 7, 6, 6, 4, 3, 4, 3, 4, 3];
-const SLEEP = [7.5, 7, 8, 7.5, 7, 7.5, 8, 7, 7.5, 7, 8, 7.5, 7, 7.5, 7, 6, 6.5, 6, 5.5, 6, 6.5, 6, 6.5, 7, 7, 6.5, 6, 6.5, 6, 7];
-const NIGHTSHADES = [0, 0, 2, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0];
-const PROCESSED = [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0];
+// can be logged in the demo. The numbers put the score right around the Elevated
+// line (30), so a rough check-in today (skin, itch, sleep, food) pushes it into High.
+const SEVERITY = [3, 3, 4, 3, 3, 2, 3, 3, 2, 3, 3, 4, 3, 3, 3, 4, 3, 3, 3, 2, 3, 3, 3, 2, 3, 3, 2, 3, 3, 3];
+const ITCH = [2, 3, 3, 2, 2, 2, 3, 2, 2, 2, 3, 3, 2, 2, 3, 3, 2, 2, 2, 2, 3, 2, 2, 2, 3, 3, 3, 3, 4, 4];
+const STRESS = [3, 3, 4, 3, 2, 3, 4, 3, 3, 2, 3, 4, 3, 3, 4, 3, 5, 5, 6, 5, 5, 4, 5, 5, 3, 3, 4, 3, 3, 3];
+const SLEEP = [7.5, 7, 8, 7.5, 7, 7.5, 8, 7, 7.5, 7, 8, 7.5, 7, 7.5, 7, 7, 6.5, 7, 6.5, 7, 6.5, 7, 7, 7.5, 6.5, 7, 6, 6.5, 6.5, 6.5];
+const NIGHTSHADES = [0, 0, 2, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0];
+const PROCESSED = [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0];
 
-// Days ago (counting yesterday as 1) for the yes/no answers.
-const SICK_DAYS = [9, 10, 11, 12];
+// Days ago (counting yesterday as 1) for the yes/no answers. Only the sore throat
+// is recent enough for its rule to count it.
+const SICK_DAYS = [17, 18, 19];
+const SORE_THROAT_DAYS = [11];
 const INJURY_DAYS = [21];
 
 // Small repeatable random numbers for the answers no rule uses.
@@ -69,6 +71,7 @@ export async function seedDemoCheckIns(
       nightshadeServings: NIGHTSHADES[at],
       dietProcessed: PROCESSED[at] === 1,
       illness: SICK_DAYS.includes(daysAgo),
+      soreThroat: SORE_THROAT_DAYS.includes(daysAgo),
       skinInjury: INJURY_DAYS.includes(daysAgo),
       waterGlasses: Math.round(5 + random() * 4),
       dietDairy: random() < 0.45,

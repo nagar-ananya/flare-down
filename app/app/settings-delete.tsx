@@ -41,7 +41,7 @@ export default function SettingsDeleteScreen(): React.ReactElement {
   return (
     <Screen contentStyle={{ paddingBottom: 100 }}>
       <Txt tone="muted" style={{ lineHeight: 21 }}>
-        This deletes everything Flare Down has saved on this phone and takes you back to the start.
+        This deletes everything FlareDown has saved on this phone and takes you back to the start.
         There is no backup, so it can't be undone.
       </Txt>
 

@@ -66,7 +66,7 @@ export default function RiskDetailScreen(): React.ReactElement {
           <BandScale score={score} />
 
           <Txt tone="muted" style={{ marginTop: spacing.lg, lineHeight: 22 }}>
-            {`Flare Down checks ${rulebook.rules.length} rules. Each one adds points. Add them up and you get your score.`}
+            {`FlareDown checks ${rulebook.rules.length} rules. Each one adds points. Add them up and you get your score.`}
           </Txt>
         </Card>
       </Reveal>

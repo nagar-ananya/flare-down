@@ -19,7 +19,7 @@ export default function RulesScreen(): React.ReactElement {
     <Screen contentStyle={{ paddingBottom: spacing.xxxl }}>
       <Reveal>
         <ScreenTitle
-          kicker="How Flare Down works"
+          kicker="How FlareDown works"
           title={`The ${rulebook.rules.length} rules`}
           subtitle="Each rule watches one thing and can add up to a set number of points. Tap a rule to see its last two weeks."
         />

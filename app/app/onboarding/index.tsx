@@ -93,7 +93,7 @@ export default function OnboardingScreen(): React.ReactElement {
           </IconBadge>
 
           <Txt variant="hero" style={{ marginTop: spacing.lg }}>
-            Flare Down
+            FlareDown
           </Txt>
           <Txt variant="heading" tone="muted" style={{ marginTop: spacing.sm, lineHeight: 26 }}>
             Track your psoriasis and see when a flare might be coming.
@@ -187,7 +187,7 @@ export default function OnboardingScreen(): React.ReactElement {
             Local conditions
           </Txt>
           <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 23 }}>
-            Weather and air quality can affect psoriasis. Flare Down gets them from a free weather
+            Weather and air quality can affect psoriasis. FlareDown gets them from a free weather
             service using your rough location (about 1 km). Nothing else is sent.
           </Txt>
 
@@ -242,7 +242,7 @@ export default function OnboardingScreen(): React.ReactElement {
             Let Fitbit fill in your sleep?
           </Txt>
           <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 23 }}>
-            Flare Down will be able to read your sleep from Fitbit later. For now you can just enter
+            FlareDown will be able to read your sleep from Fitbit later. For now you can just enter
             your sleep in the daily check-in.
           </Txt>
 
@@ -263,7 +263,7 @@ export default function OnboardingScreen(): React.ReactElement {
           >
             <Kicker>What happens next</Kicker>
             <Txt tone="muted" style={{ marginTop: spacing.sm, lineHeight: 21 }}>
-              Flare Down needs 14 days of check-ins before it can show a score. Each check-in takes
+              FlareDown needs 14 days of check-ins before it can show a score. Each check-in takes
               about 30 seconds.
             </Txt>
           </Card>
